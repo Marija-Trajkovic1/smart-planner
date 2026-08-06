@@ -1,0 +1,46 @@
+.main-header {
+  display: flex;
+  align-items: center;
+  padding: 0 2rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.custom-header {
+  background-color: #007FFF !important; 
+  color: #ffffff !important;
+  display: flex;
+  align-items: center;
+  padding: 0 2rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+  button[mat-button] {
+    color: #ffffff;
+  }
+}
+
+.app-title {
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  font-size: 1.4rem;
+}
+
+.spacer {
+  flex: 1 1 auto;
+}
+
+.auth-actions {
+  display: flex;
+  gap: 10px; 
+}
+
+.btn-register {
+  background-color: #ffffff !important;
+  color: #007FFF !important;
+  font-weight: bold;
+}
+
+.btn-logout {
+  background-color: #ff4757 !important;
+  color: white !important;
+  font-weight: bold;
+}

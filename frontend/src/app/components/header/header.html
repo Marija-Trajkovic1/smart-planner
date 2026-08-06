@@ -1,0 +1,15 @@
+<mat-toolbar class="main-header custom-header">
+  <span class="app-title">Smart Planner</span>
+
+  <span class="spacer"></span>
+
+  <div class="auth-actions">
+    @if (!isLoggedIn()) {
+        <button mat-button (click)="toggleAuth()">Log In</button>
+        <button mat-raised-button class="btn-register">Register</button>
+    }
+    @else {
+        <button mat-flat-button class="btn-logout" (click)="toggleAuth()">Logout</button>
+    }
+  </div>
+</mat-toolbar>
