@@ -1,1 +1,37 @@
-<p>register works!</p>
+<div>
+    <mat-card>
+        <mat-card-header>
+            <mat-card-title>Registracija novog korisnika</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+            <mat-form-field appearance="outline">
+                <mat-label>Vaše ime</mat-label>
+                <input matInput type="text" placeholder="Unesite ime" required/>
+                <mat-hint>Npr. Marko</mat-hint>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+                <mat-label>Vaše prezime</mat-label>
+                <input matInput type="text" placeholder="Unesite prezime" required/>
+                <mat-hint>Npr. Marković</mat-hint>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+                <mat-label>Vaša email adresa</mat-label>
+                <input matInput type="email" placeholder="Unesite email" required/>
+                <mat-hint>Npr. marko.markovic@example.com</mat-hint>
+            </mat-form-field>   
+
+            <mat-form-field appearance="outline">
+                <mat-label>Vaša lozinka</mat-label>
+                <input matInput type="password" placeholder="Unesite lozinku" formControlName="password" required/>
+                <mat-hint>Lozinka mora sadržati najmanje 8 karaktera, veliko slovo i broj</mat-hint>
+            </mat-form-field>
+
+            <div>
+                <button mat-raised-button color="primary" type="submit">Registruj se</button>
+                <button mat-button color="primary" routerLink="/login">Već imate nalog? Prijavite se</button>
+            </div>
+        </mat-card-content>
+    </mat-card>
+</div>
