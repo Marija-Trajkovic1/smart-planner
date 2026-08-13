@@ -12,6 +12,8 @@ import { CategoryModule } from './category/category.module';
 import { DailynotesModule } from './dailynotes/dailynotes.module';
 import { DayModule } from './day/day.module';
 import { GeneralnotesModule } from './generalnotes/generalnotes.module';
+import { AuthModule } from './auth/auth.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
@@ -29,7 +31,12 @@ import { GeneralnotesModule } from './generalnotes/generalnotes.module';
     CategoryModule,
     DailynotesModule,
     DayModule,
-    GeneralnotesModule
+    GeneralnotesModule,
+    AuthModule,
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: '.env',
+    })
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -9,10 +9,10 @@ export class User {
     id: number;
 
     @Column()
-    fullName: string;
+    firstName: string;
 
     @Column()
-    surname: string;
+    lastName: string;
 
     @Column({unique: true})
     email: string;
@@ -26,5 +26,4 @@ export class User {
 
     @OneToMany(()=>GeneralNote, (generalNote)=>generalNote.user)
     generalNotes: GeneralNote[];
-
 }
