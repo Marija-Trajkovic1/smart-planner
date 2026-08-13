@@ -1,1 +1,35 @@
-<p>login works!</p>
+<div class="login-container">
+    <mat-card>
+        <mat-card-header>
+            <mat-card-title>Prijavite se na svoj profil</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+            <form [formGroup]="loginForm" (ngSubmit)="onLogin()">
+                <mat-form-field appearance="outline" class="register-form-field">
+                    <mat-label>Vaša email adresa</mat-label>
+                    <input matInput 
+                        type="email" 
+                        placeholder="Unesite email" 
+                        formControlName="email" 
+                        required
+                    />
+                </mat-form-field>   
+
+                <mat-form-field appearance="outline" class="register-form-field">
+                    <mat-label>Vaša lozinka</mat-label>
+                    <input matInput 
+                        type="password" 
+                        placeholder="Unesite lozinku" 
+                        formControlName="password" 
+                        required
+                    />
+                    <mat-hint>Lozinka mora sadržati najmanje 8 karaktera, veliko slovo i broj</mat-hint>
+                </mat-form-field>
+                <div class="login-buttons">
+                    <button mat-flat-button color="primary" type="submit" >Prijavi se</button>
+                </div>
+            </form>
+
+        </mat-card-content>
+    </mat-card>
+</div>
