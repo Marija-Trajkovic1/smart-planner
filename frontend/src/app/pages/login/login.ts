@@ -2,7 +2,7 @@ import { Component, inject } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardHeader, MatCardContent, MatCardTitle, MatCardModule } from "@angular/material/card";
-import { MatFormField, MatHint, MatLabel } from '@angular/material/form-field';
+import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { Authorization } from '../../core/services/authorization/authorization';
 import { Router } from '@angular/router';
@@ -47,7 +47,7 @@ export class Login {
       this.authorizationService.login(loginData).subscribe({
         next:(response)=>{
           console.log('Login usupesan', response);
-          localStorage.setItem('token', response.access_token);
+          sessionStorage.setItem('access_token', response.access_token);
           this.router.navigate(['/overview']);
         },
         error:(error)=>{

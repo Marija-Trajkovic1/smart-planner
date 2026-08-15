@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -11,12 +11,19 @@ import { Router, RouterLink } from '@angular/router';
   styleUrl: './header.scss',
 })
 export class Header {
+  public router = inject(Router);
 
-  constructor(public router:Router) {}
+  isLoggedIn = signal<boolean>(!!sessionStorage.getItem('access_token'));
 
-  isLoggedIn = signal<boolean>(false);
+  constructor(){
+    this.router.events.subscribe(()=>{
+      this.isLoggedIn.set(!!sessionStorage.getItem('access_token'));
+    });
+  }
 
   onLogout(){
-    this.isLoggedIn.update(status => !status);
+    sessionStorage.removeItem('access_token');
+    this.isLoggedIn.set(false);
+    this.router.navigate(['/login']);
   }
 }
