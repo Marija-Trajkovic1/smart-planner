@@ -5,6 +5,8 @@ import { Observable } from 'rxjs';
 import { environment } from '../../environments/environments';
 import { LoginDto } from '../../dtos/login.dto';
 import { Router } from '@angular/router';
+import { ACCESS_TOKEN } from '../../constants/storage.constants';
+import { LOGIN } from '../../constants/routes.constants';
 
 @Injectable({
   providedIn: 'root',
@@ -22,7 +24,7 @@ export class Authorization {
   }
 
   logout(){
-    sessionStorage.removeItem('access_token');
-    this.router.navigate(['/login']);
+    sessionStorage.removeItem(ACCESS_TOKEN);
+    this.router.navigate([LOGIN]);
   }
 }

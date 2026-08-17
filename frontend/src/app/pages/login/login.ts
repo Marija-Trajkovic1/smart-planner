@@ -6,6 +6,8 @@ import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { Authorization } from '../../core/services/authorization/authorization';
 import { Router } from '@angular/router';
+import { ACCESS_TOKEN } from '../../core/constants/storage.constants';
+import { MAIN } from '../../core/constants/routes.constants';
 
 @Component({
   selector: 'app-login',
@@ -47,8 +49,8 @@ export class Login {
       this.authorizationService.login(loginData).subscribe({
         next:(response)=>{
           console.log('Login usupesan', response);
-          sessionStorage.setItem('access_token', response.access_token);
-          this.router.navigate(['/overview']);
+          sessionStorage.setItem(ACCESS_TOKEN, response.access_token);
+          this.router.navigate([MAIN]);
         },
         error:(error)=>{
           console.error('Login neuspesan: ', error);

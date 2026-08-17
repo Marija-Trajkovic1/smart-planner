@@ -3,6 +3,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { Router, RouterLink } from '@angular/router';
+import { LOGIN } from '../../core/constants/routes.constants';
+import { ACCESS_TOKEN } from '../../core/constants/storage.constants';
 
 @Component({
   selector: 'app-header',
@@ -13,17 +15,17 @@ import { Router, RouterLink } from '@angular/router';
 export class Header {
   public router = inject(Router);
 
-  isLoggedIn = signal<boolean>(!!sessionStorage.getItem('access_token'));
+  isLoggedIn = signal<boolean>(!!sessionStorage.getItem(ACCESS_TOKEN));
 
   constructor(){
     this.router.events.subscribe(()=>{
-      this.isLoggedIn.set(!!sessionStorage.getItem('access_token'));
+      this.isLoggedIn.set(!!sessionStorage.getItem(ACCESS_TOKEN));
     });
   }
 
   onLogout(){
-    sessionStorage.removeItem('access_token');
+    sessionStorage.removeItem(ACCESS_TOKEN);
     this.isLoggedIn.set(false);
-    this.router.navigate(['/login']);
+    this.router.navigate([LOGIN]);
   }
 }

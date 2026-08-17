@@ -7,6 +7,7 @@ import { MatInputModule } from '@angular/material/input';
 import { Router, RouterLink } from '@angular/router';
 import { RegisterDto } from '../../core/dtos/register.dto';
 import { Authorization } from '../../core/services/authorization/authorization';
+import { LOGIN } from '../../core/constants/routes.constants';
 
 @Component({
   selector: 'app-register',
@@ -42,7 +43,7 @@ export class Register {
       this.authorizationService.register(registrationData).subscribe({
         next: (response) => {
           console.log('Registration successful:', response);
-          this.router.navigate(['/login']);
+          this.router.navigate([LOGIN]);
         },
         error: (error) => {
           console.error('Registration failed:', error);

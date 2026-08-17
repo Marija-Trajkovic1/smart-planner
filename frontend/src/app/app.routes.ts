@@ -11,7 +11,7 @@ export const routes: Routes = [
     {path: 'login', component:Login},
     {path: 'register', component:Register},
 
-    {path: 'overview', component: Main, canActivate: [jwtAuthGuard] },
+    {path: 'main', component: Main, canActivate: [jwtAuthGuard] },
 
     
     {path: '**', redirectTo:''},

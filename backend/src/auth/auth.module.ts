@@ -14,7 +14,7 @@ import { JwtStrategy } from './jwt.strategy';
       imports: [ConfigModule],
       useFactory: (configService : ConfigService)=>({
         secret:configService.get<string>('JWT_SECRET'),
-        signOptions:{expiresIn: '15m'},
+        signOptions:{expiresIn: '5m'},
       }),
       inject: [ConfigService],
     }),
