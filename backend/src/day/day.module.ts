@@ -3,6 +3,7 @@ import { DayService } from './day.service';
 import { DayController } from './day.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Day } from './day.entity';
+import { DayService } from './day.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Day])],

@@ -1,22 +1,36 @@
-import { Component, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { MatCardTitle } from '@angular/material/card';
 import { DailyNotesLists } from '../../components/daily-notes-lists/daily-notes-lists';
-import { MatIcon } from '@angular/material/icon';
-import { MatButton, MatButtonModule } from '@angular/material/button';
+import { MatButtonModule } from '@angular/material/button';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { DailyNoteDialog } from '../../components/daily-note-dialog/daily-note-dialog';
+import { DailyNote } from '../../core/models/daily-note.model';
 
 @Component({
   selector: 'app-main',
   imports: [
     MatCardTitle, 
-    MatIcon,
     MatButtonModule,
+    MatDialogModule,
     DailyNotesLists,
   ],
   templateUrl: './main.html',
   styleUrl: './main.scss',
 })
 export class Main {
-  dailyNotes = signal<any>([]);
+  private dialog = inject(MatDialog);
+
+  dailyNotes = signal<DailyNote[]>([]);
   
-  onAddPlan(){}
+  onAddPlan(): void{
+    const dialogRef = this.dialog.open(DailyNoteDialog);
+
+    dialogRef.afterClosed().subscribe(((result?: { date: Date })=>{
+       if (result) {
+        console.log('Izabrani datum:', result);
+
+      }
+    }))
+  }
+
 }
