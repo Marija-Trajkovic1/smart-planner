@@ -6,6 +6,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { PassportModule } from '@nestjs/passport';
 import { JwtStrategy } from './jwt.strategy';
+import { StringValue } from 'ms';
 
 @Module({
   imports: [UserModule,
@@ -14,7 +15,7 @@ import { JwtStrategy } from './jwt.strategy';
       imports: [ConfigModule],
       useFactory: (configService : ConfigService)=>({
         secret:configService.get<string>('JWT_SECRET'),
-        signOptions:{expiresIn: '5m'},
+        signOptions:{expiresIn: configService.get<StringValue>('EXPIRES_IN')},
       }),
       inject: [ConfigService],
     }),

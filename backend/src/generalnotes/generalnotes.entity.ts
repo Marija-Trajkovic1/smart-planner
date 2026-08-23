@@ -11,13 +11,16 @@ export class GeneralNote {
     title: string;
 
     @Column({nullable: true})
-    priority: number;
+    priority?: number;
+
+    @Column({nullable: true})
+    logo?: string;
 
     @ManyToOne(()=>User, (user)=>user.generalNotes, {onDelete: 'CASCADE'})
     user: User;
 
     @ManyToOne(()=>Category, (category)=>category.generalNotes, {nullable: true, onDelete: 'SET NULL'})
-    category: Category;
+    category?: Category;
     
 
 

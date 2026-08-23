@@ -11,25 +11,34 @@ export class DailyNote {
     title: string;
 
     @Column({type: 'time', nullable: true})
-    time: string;
+    time?: string;
 
     @Column({nullable: true})
-    location: string;
+    location?: string;
 
     @Column({nullable: true})
-    priority: number;
+    priority?: number; 
+    
+    @Column({default: false})
+    isTheMostImportantToday: boolean;
 
     @Column({nullable: true})
-    reminder: boolean;
+    reminder?: boolean;
 
     @Column({nullable: true})
-    link: string;
+    link?: string;
 
     @Column({default: false})
     isDone: boolean;
 
+    @Column({nullable:true})
+    textType?: string;
+
+    @Column({nullable:true})
+    textHeight?: number;
+
     @ManyToOne(()=>Category, (category)=>category.dailyNotes, {nullable: true, onDelete: 'SET NULL'})
-    category: Category;
+    category?: Category;
 
     @ManyToOne(()=>Day, (day)=>day.dailyNotes, {onDelete: 'CASCADE'})
     day: Day;

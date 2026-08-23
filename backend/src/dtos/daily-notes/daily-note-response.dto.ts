@@ -1,15 +1,19 @@
 import { Type } from "class-transformer";
+import { CategoryResponseDto } from "../category/category-response.dto";
 
 export class DailyNoteResponseDto{
     id: number;
     title:string;
     time: string;
     location:string;
-    priority: string;
+    priority: number;
+    isTheMostImportantToday: boolean;
     reminder: boolean;
     link: string;
     isDone: boolean;
+    textType: string;
+    textHeight: number;
 
-    @Type(()=> String)
-    categoryName?: string;
+    @Type(() => CategoryResponseDto)
+    category?: CategoryResponseDto;
 }

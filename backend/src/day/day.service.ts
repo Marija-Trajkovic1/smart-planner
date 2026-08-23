@@ -22,7 +22,7 @@ export class DayService {
         });
 
         if(existingDay){
-            throw new ConflictException('Dan za datum ${date} već postoji.');
+            throw new ConflictException(`Dan za datum ${date} već postoji.`);
         }
 
         const newDay = this.dayRepository.create({
@@ -35,14 +35,28 @@ export class DayService {
     }
 
     async getDaysForUser(userId: number){
-       return await this.dayRepository.find({
-            where :{ user : {id:userId} },
+       return this.dayRepository.find({
+            where: { user: { id: userId } },
             relations : {
-                dailyNotes:{
-                    category: true,
-                }
+                dailyNotes: true,
             },
-            order: {date: 'ASC'}
+            order: {date: 'DESC'}
         });
     }
+
+    async deleteDayForUser(userId: number, dayId: number): Promise<{ message: string }>{
+        const result = await this.dayRepository.delete({
+            id: dayId,
+            user: { id: userId }
+        });
+
+        if (result.affected === 0)
+            throw new NotFoundException('Dan nije pronađen ili nemate dozvolu da ga obrišete.');
+
+        return {
+            message: 'Day successfully deleted',
+        };  
+    }
+
+    
 }
