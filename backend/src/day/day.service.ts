@@ -21,9 +21,8 @@ export class DayService {
             }
         });
 
-        if(existingDay){
+        if(existingDay)
             throw new ConflictException(`Dan za datum ${date} već postoji.`);
-        }
 
         const newDay = this.dayRepository.create({
             date: date,
@@ -31,7 +30,6 @@ export class DayService {
         });
 
         return await this.dayRepository.save(newDay);
-
     }
 
     async getDaysForUser(userId: number){

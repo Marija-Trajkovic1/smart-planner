@@ -14,7 +14,7 @@ export class GeneralNote {
     priority?: number;
 
     @Column({nullable: true})
-    logo?: string;
+    isDone?: boolean;
 
     @ManyToOne(()=>User, (user)=>user.generalNotes, {onDelete: 'CASCADE'})
     user: User;

@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateDailyNoteDto } from '../dtos/daily-notes/create-daily-notes.dto';
 import { DailyNote } from './dailynotes.entity';
-import { Repository } from 'typeorm';
+import { DataSource, EntityManager, Repository } from 'typeorm';
 import { Day } from '../day/day.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Category } from '../category/category.entity';
@@ -20,46 +20,66 @@ export class DailyNotesService {
 
         @InjectRepository(Category)
         private categoryRepository: Repository<Category>,
+
+        private readonly dataSource: DataSource,
     ){}
 
     async createDailyNoteForUserAndDay(
         userId: number,
-        createDailyNoteDto: CreateDailyNoteDto,
-        dayId: number)
-    {
-        const day = await this.dayRepository.findOne({
-              where: { id: dayId, user: { id: userId } }
+        dayId: number,
+        createDailyNoteDto: CreateDailyNoteDto
+    ): Promise<DailyNote> {
+        return this.dataSource.transaction(async (manager) => {
+            return this.createDailyNote(
+                userId,
+                dayId,
+                createDailyNoteDto,
+                manager,
+            );
+        });
+    }
+
+    async createDailyNote( userId: number, dayId: number, createDailyNoteDto: CreateDailyNoteDto, manager: EntityManager,
+    ): Promise<DailyNote> {
+        const dayRepository = manager.getRepository(Day);
+        const categoryRepository = manager.getRepository(Category);
+        const dailyNoteRepository = manager.getRepository(DailyNote);
+
+        const day = await dayRepository.findOne({
+            where: { 
+                id: dayId, 
+                user: { id: userId } 
+            },
         });
 
-        if(!day){
+        if(!day)
             throw new NotFoundException('Nemate kreirani dati datum!');
-        }
 
         let category: Category | undefined = undefined;
 
         if(createDailyNoteDto.categoryId !== undefined){
-            const existingCategory = await this.categoryRepository.findOne({
-                where: {id:createDailyNoteDto.categoryId }
+            const existingCategory = await categoryRepository.findOne({
+                where: {
+                    id:createDailyNoteDto.categoryId 
+                },
             });
 
-            existingCategory !== null ? category = existingCategory : category=undefined;
-        }
+            if(!existingCategory){
+                throw new NotFoundException('Kategorija ne postoji!');
+            }
 
-        let newDailyNote = new  DailyNote();
-        newDailyNote.title = createDailyNoteDto.title;
-        newDailyNote.time = createDailyNoteDto.time;
-        newDailyNote.location = createDailyNoteDto.location;
-        newDailyNote.priority = createDailyNoteDto.priority;
-        newDailyNote.reminder = createDailyNoteDto.reminder;
-        newDailyNote.link = createDailyNoteDto.link;
-        newDailyNote.isDone = false;
-        newDailyNote.category  = category;
-        newDailyNote.day = day;
-        newDailyNote.isTheMostImportantToday = createDailyNoteDto.isTheMostImportantToday;
-        newDailyNote.textHeight = createDailyNoteDto.textHeight;
-        newDailyNote.textType = createDailyNoteDto.textType;
-        
-        return await this.dailyNoteRepository.save(newDailyNote);
+            category = existingCategory;
+        }
+        const {categoryId, ...dailyNoteData} = createDailyNoteDto;
+
+        const dailyNote = dailyNoteRepository.create({
+            ...dailyNoteData,
+            isDone: false,
+            category,
+            day,
+        });
+
+        return await dailyNoteRepository.save(dailyNote);
     }
 
     async updateDailyNoteForUser(userId: number, dailyNoteId: number, updateDailyNoteDto:  UpdateDailyNoteDto){
@@ -72,6 +92,27 @@ export class DailyNotesService {
         Object.assign(dailyNoteForUpdate, updateDailyNoteDto);
         return this.dailyNoteRepository.save(dailyNoteForUpdate);
 
+    }
+
+    async updateCategoryForDailyNote (userId: number, dailyNoteId: number, categoryId: number)
+    {
+        const dailyNote =  await this.findDailyNote(dailyNoteId, userId);
+
+        if (!dailyNote)
+            throw new NotFoundException('Generalna beleška ne postoji!');
+
+        const category = await this.categoryRepository.findOne({
+            where: {
+                id: categoryId,
+            },
+        });
+        
+        if (!category) 
+            throw new NotFoundException('Kategorija ne postoji!');
+        
+        dailyNote.category = category;
+
+        return this.dailyNoteRepository.save(dailyNote);
     }
 
     async finishDailyNote(userId: number, dailyNoteId: number){
@@ -89,17 +130,17 @@ export class DailyNotesService {
         const dailyNoteForDelete = await this.findDailyNote(dailyNoteId, userId);
        
         if (!dailyNoteForDelete) {
-            throw new NotFoundException('Daily note not found');
+            throw new NotFoundException('Dnevna beleška koju želite da obrišete nije pronađena.');
         }
 
         const result = await this.dailyNoteRepository.delete(dailyNoteForDelete.id);
         
         if (result.affected === 0) {
-            throw new NotFoundException('Daily note could not be deleted');
+            throw new NotFoundException('Dnevna beleška nije obrisana!');
         }
 
         return {
-            message: 'Daily note successfully deleted',
+            message: 'Dnevna beleška uspešno obrisana!',
         };
     }
 
@@ -148,6 +189,53 @@ export class DailyNotesService {
             }
         });
         return dailyNote;
+    }
+
+    private async createDailyNoteForGeneralNote(
+        userId: number,
+        dayId: number,
+        createDailyNoteDto: CreateDailyNoteDto,
+        manager?: EntityManager
+    ){
+        const dailyNoteRepository = manager?.getRepository(DailyNote) ?? this.dailyNoteRepository;
+        const dayRepository = manager?.getRepository(Day) ?? this.dayRepository;
+        const categoryRepository = manager?.getRepository(Category) ?? this.categoryRepository;
+
+        const day = await this.dayRepository.findOne({
+            where: { 
+                id: dayId, 
+                user: { id: userId } 
+            },
+        });
+
+        if(!day)
+            throw new NotFoundException('Nemate kreirani dati datum!');
+
+        let category: Category | undefined = undefined;
+
+        if(createDailyNoteDto.categoryId !== undefined){
+            const existingCategory = await this.categoryRepository.findOne({
+                where: {
+                    id:createDailyNoteDto.categoryId 
+                },
+            });
+
+            if(!existingCategory){
+                throw new NotFoundException('Kategorija ne postoji!');
+            }
+
+            category = existingCategory;
+        }
+        const {categoryId, ...dailyNoteData} = createDailyNoteDto;
+
+        const dailyNote = this.dailyNoteRepository.create({
+            ...dailyNoteData,
+            isDone: false,
+            category,
+            day,
+        });
+
+        return await this.dailyNoteRepository.save(dailyNote);
     }
 
 

@@ -26,10 +26,7 @@ export class DailynotesController {
         @Param('dayId', ParseIntPipe) dayId: number,
         @Body() createDailyNoteDto: CreateDailyNoteDto
     ){
-        return this.dailyNoteService.createDailyNoteForUserAndDay(
-            userId,
-            createDailyNoteDto,
-            dayId);
+        return this.dailyNoteService.createDailyNoteForUserAndDay(userId, dayId, createDailyNoteDto);
     }
 
     @UseGuards(JwtAuthGuard)
@@ -40,6 +37,16 @@ export class DailynotesController {
         @Body() updateDailyNoteDto: UpdateDailyNoteDto
     ){
         return this.dailyNoteService.updateDailyNoteForUser(userId, dailyNoteId, updateDailyNoteDto)
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Put('updateCategoryForDailyNote/:idDailyNote')
+    async updateCategoryForDailyNote(
+        @GetUser('id') userId: number,
+        @Param('dailyNoteId')dailyNoteId: number,
+        @Param('categoryId') categoryId: number
+    ){
+        return this.dailyNoteService.updateCategoryForDailyNote( userId,dailyNoteId, categoryId);
     }
 
     @UseGuards(JwtAuthGuard)
@@ -69,9 +76,5 @@ export class DailynotesController {
     ): Promise<{message: string}>{
         return this.dailyNoteService.deleteDailyNote(userId, dailyNoteId);
     }
-
-    
-    
-    
 
 }
