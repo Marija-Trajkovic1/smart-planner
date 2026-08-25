@@ -25,7 +25,7 @@ export class DailynotesController {
         @GetUser('id') userId: number,
         @Param('dayId', ParseIntPipe) dayId: number,
         @Body() createDailyNoteDto: CreateDailyNoteDto
-    ){
+    ): Promise<DailyNoteResponseDto> {
         return this.dailyNoteService.createDailyNoteForUserAndDay(userId, dayId, createDailyNoteDto);
     }
 

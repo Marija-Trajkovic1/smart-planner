@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Category } from './category.entity';
 import { Repository } from 'typeorm';
 import { CategoryResponseDto } from '../dtos/category/category-response.dto';
+import { plainToInstance } from 'class-transformer';
 
 @Injectable()
 export class CategoryService {
@@ -14,6 +15,6 @@ export class CategoryService {
     async getListOfCategories(): Promise<CategoryResponseDto[]>{
         const categories = await this.categoryRepository.find();
 
-        return Object.assign(CategoryResponseDto, categories);
+        return plainToInstance(CategoryResponseDto, categories);
     }
 }

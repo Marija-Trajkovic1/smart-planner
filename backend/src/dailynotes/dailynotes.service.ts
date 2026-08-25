@@ -28,19 +28,20 @@ export class DailyNotesService {
         userId: number,
         dayId: number,
         createDailyNoteDto: CreateDailyNoteDto
-    ): Promise<DailyNote> {
+    ): Promise<DailyNoteResponseDto> {
         return this.dataSource.transaction(async (manager) => {
-            return this.createDailyNote(
+            const createdDailyNote = this.createDailyNote(
                 userId,
                 dayId,
                 createDailyNoteDto,
                 manager,
             );
+            return plainToInstance(DailyNoteResponseDto, createdDailyNote);
         });
     }
 
     async createDailyNote( userId: number, dayId: number, createDailyNoteDto: CreateDailyNoteDto, manager: EntityManager,
-    ): Promise<DailyNote> {
+    ): Promise<DailyNoteResponseDto> {
         const dayRepository = manager.getRepository(Day);
         const categoryRepository = manager.getRepository(Category);
         const dailyNoteRepository = manager.getRepository(DailyNote);
@@ -79,10 +80,11 @@ export class DailyNotesService {
             day,
         });
 
-        return await dailyNoteRepository.save(dailyNote);
+        const createdDailyNote = await dailyNoteRepository.save(dailyNote);
+        return plainToInstance(DailyNoteResponseDto, createdDailyNote);
     }
 
-    async updateDailyNoteForUser(userId: number, dailyNoteId: number, updateDailyNoteDto:  UpdateDailyNoteDto){
+    async updateDailyNoteForUser(userId: number, dailyNoteId: number, updateDailyNoteDto: UpdateDailyNoteDto){
         const dailyNoteForUpdate = await this.findDailyNote(dailyNoteId, userId);
 
         if(!dailyNoteForUpdate){
@@ -201,7 +203,7 @@ export class DailyNotesService {
         const dayRepository = manager?.getRepository(Day) ?? this.dayRepository;
         const categoryRepository = manager?.getRepository(Category) ?? this.categoryRepository;
 
-        const day = await this.dayRepository.findOne({
+        const day = await dayRepository.findOne({
             where: { 
                 id: dayId, 
                 user: { id: userId } 
@@ -214,7 +216,7 @@ export class DailyNotesService {
         let category: Category | undefined = undefined;
 
         if(createDailyNoteDto.categoryId !== undefined){
-            const existingCategory = await this.categoryRepository.findOne({
+            const existingCategory = await categoryRepository.findOne({
                 where: {
                     id:createDailyNoteDto.categoryId 
                 },
@@ -228,15 +230,13 @@ export class DailyNotesService {
         }
         const {categoryId, ...dailyNoteData} = createDailyNoteDto;
 
-        const dailyNote = this.dailyNoteRepository.create({
+        const dailyNote = dailyNoteRepository.create({
             ...dailyNoteData,
             isDone: false,
             category,
             day,
         });
 
-        return await this.dailyNoteRepository.save(dailyNote);
+        return await dailyNoteRepository.save(dailyNote);
     }
-
-
 }
