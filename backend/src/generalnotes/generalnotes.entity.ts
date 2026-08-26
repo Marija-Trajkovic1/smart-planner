@@ -13,7 +13,7 @@ export class GeneralNote {
     @Column({nullable: true})
     priority?: number;
 
-    @Column({nullable: true})
+    @Column({nullable: true, default: false})
     isDone?: boolean;
 
     @ManyToOne(()=>User, (user)=>user.generalNotes, {onDelete: 'CASCADE'})

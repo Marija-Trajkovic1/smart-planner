@@ -27,7 +27,7 @@ export class DayController {
     }
 
     @UseGuards(JwtAuthGuard)
-    @Delete('deleteDayForUse/:dayId')
+    @Delete('deleteDayForUser/:dayId')
     async deleteDayForUser(
         @GetUser('id') userId: number,
         @Param('dayId', ParseIntPipe) dayId : number

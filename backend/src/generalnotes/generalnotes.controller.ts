@@ -21,7 +21,7 @@ export class GeneralNotesController {
     }
 
     @UseGuards(JwtAuthGuard)
-    @Put('updateGeneralNote/:idGeneralNote')
+    @Put('updateGeneralNote/:generalNoteId')
     async updateGeneralNote(
         @GetUser('id') userId: number,
         @Param('generalNoteId', ParseIntPipe) generalNoteId: number,
@@ -59,10 +59,10 @@ export class GeneralNotesController {
     }
 
     @UseGuards(JwtAuthGuard)
-    @Put('updateCategoryForGeneralNote/:idGeneralNote')
+    @Put('updateCategoryForGeneralNote/:generalNoteId/:categoryId')
     async updateCategoryForGeneralNote(
         @GetUser('id') userId: number,
-        @Param('generalNoteId')generalNoteId: number,
+        @Param('generalNoteId') generalNoteId: number,
         @Param('categoryId') categoryId: number
     ){
         return this.generalNotesService.updateCategoryForGeneralNote( userId, generalNoteId, categoryId);

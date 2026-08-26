@@ -30,13 +30,13 @@ export class DailyNotesService {
         createDailyNoteDto: CreateDailyNoteDto
     ): Promise<DailyNoteResponseDto> {
         return this.dataSource.transaction(async (manager) => {
-            const createdDailyNote = this.createDailyNote(
+            const createdDailyNote = await this.createDailyNote(
                 userId,
                 dayId,
                 createDailyNoteDto,
                 manager,
             );
-            return plainToInstance(DailyNoteResponseDto, createdDailyNote);
+            return createdDailyNote;
         });
     }
 
@@ -84,7 +84,9 @@ export class DailyNotesService {
         return plainToInstance(DailyNoteResponseDto, createdDailyNote);
     }
 
-    async updateDailyNoteForUser(userId: number, dailyNoteId: number, updateDailyNoteDto: UpdateDailyNoteDto){
+    async updateDailyNoteForUser(userId: number, dailyNoteId: number, updateDailyNoteDto: UpdateDailyNoteDto)
+        : Promise<DailyNoteResponseDto>
+    {
         const dailyNoteForUpdate = await this.findDailyNote(dailyNoteId, userId);
 
         if(!dailyNoteForUpdate){
@@ -92,11 +94,12 @@ export class DailyNotesService {
         }
 
         Object.assign(dailyNoteForUpdate, updateDailyNoteDto);
-        return this.dailyNoteRepository.save(dailyNoteForUpdate);
-
+        const updatedDailyNote = this.dailyNoteRepository.save(dailyNoteForUpdate);
+        return plainToInstance(DailyNoteResponseDto, updatedDailyNote);
     }
 
     async updateCategoryForDailyNote (userId: number, dailyNoteId: number, categoryId: number)
+    : Promise<DailyNoteResponseDto>
     {
         const dailyNote =  await this.findDailyNote(dailyNoteId, userId);
 
@@ -114,18 +117,20 @@ export class DailyNotesService {
         
         dailyNote.category = category;
 
-        return this.dailyNoteRepository.save(dailyNote);
+        const updatedDailyNote = this.dailyNoteRepository.save(dailyNote);
+        return plainToInstance(DailyNoteResponseDto, updatedDailyNote);
     }
 
-    async finishDailyNote(userId: number, dailyNoteId: number){
+    async finishDailyNote(userId: number, dailyNoteId: number): Promise<DailyNoteResponseDto>{
         const dailyNoteForFinish = await this.findDailyNote(dailyNoteId, userId);
 
         if (!dailyNoteForFinish) {
-            throw new NotFoundException('Daily note not found');
+            throw new NotFoundException('Dnevna beleška nije pronađena.');
         }
        
         dailyNoteForFinish.isDone = true;
-        return this.dailyNoteRepository.save(dailyNoteForFinish);
+        const updatedDailyNote = this.dailyNoteRepository.save(dailyNoteForFinish);
+        return plainToInstance(DailyNoteResponseDto, updatedDailyNote);
     }
 
     async deleteDailyNote(userId: number, dailyNoteId: number): Promise<{message: string}>{
@@ -164,19 +169,15 @@ export class DailyNotesService {
         return plainToInstance(DailyNoteResponseDto, dailyNotes);
     }
 
-    async updateDailyNotePriority(userId: number, dailyNoteId: number, newPriority: number): Promise<{message: string}>{
+    async updateDailyNotePriority(userId: number, dailyNoteId: number, newPriority: number): Promise<DailyNoteResponseDto>{
         const dailyNoteForUpdatePriority = await this.findDailyNote(dailyNoteId, userId);
         if(!dailyNoteForUpdatePriority){
-            throw new NotFoundException('Daily note not found!');
+            throw new NotFoundException('Dnevna beleška nije pronađena!');
         }
 
         dailyNoteForUpdatePriority.priority = newPriority;
-        const result = await this.dailyNoteRepository.save(dailyNoteForUpdatePriority);
-
-        return {
-            message: 'Priority updated successfully.'
-        }
-
+        const updatedDailyNote = await this.dailyNoteRepository.save(dailyNoteForUpdatePriority);
+        return plainToInstance(DailyNoteResponseDto, updatedDailyNote);
     }
 
     private async findDailyNote(dailyNoteId: number, userId: number): Promise<DailyNote | null> {
@@ -188,55 +189,9 @@ export class DailyNotesService {
                         id: userId,
                     }
                 }
-            }
+            },
+            relations: { category: true }
         });
         return dailyNote;
-    }
-
-    private async createDailyNoteForGeneralNote(
-        userId: number,
-        dayId: number,
-        createDailyNoteDto: CreateDailyNoteDto,
-        manager?: EntityManager
-    ){
-        const dailyNoteRepository = manager?.getRepository(DailyNote) ?? this.dailyNoteRepository;
-        const dayRepository = manager?.getRepository(Day) ?? this.dayRepository;
-        const categoryRepository = manager?.getRepository(Category) ?? this.categoryRepository;
-
-        const day = await dayRepository.findOne({
-            where: { 
-                id: dayId, 
-                user: { id: userId } 
-            },
-        });
-
-        if(!day)
-            throw new NotFoundException('Nemate kreirani dati datum!');
-
-        let category: Category | undefined = undefined;
-
-        if(createDailyNoteDto.categoryId !== undefined){
-            const existingCategory = await categoryRepository.findOne({
-                where: {
-                    id:createDailyNoteDto.categoryId 
-                },
-            });
-
-            if(!existingCategory){
-                throw new NotFoundException('Kategorija ne postoji!');
-            }
-
-            category = existingCategory;
-        }
-        const {categoryId, ...dailyNoteData} = createDailyNoteDto;
-
-        const dailyNote = dailyNoteRepository.create({
-            ...dailyNoteData,
-            isDone: false,
-            category,
-            day,
-        });
-
-        return await dailyNoteRepository.save(dailyNote);
     }
 }

@@ -1,4 +1,4 @@
-import { Catch, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { GeneralNote } from './generalnotes.entity';
 import { DataSource, Repository } from 'typeorm';
@@ -6,10 +6,11 @@ import { CreateGeneralNoteDto } from '../dtos/general-notes/create-general-note.
 import { UpdateGeneralNoteDto } from '../dtos/general-notes/update-general-note.dto';
 import { DailyNotesService } from '../dailynotes/dailynotes.service';
 import { CreateDailyNoteDto } from '../dtos/daily-notes/create-daily-notes.dto';
-import { DailyNote } from '../dailynotes/dailynotes.entity';
 import { GeneralNotesResponseDto } from '../dtos/general-notes/general-notes-response.dto';
 import { plainToInstance } from 'class-transformer';
 import { Category } from '../category/category.entity';
+import { DailyNoteResponseDto } from '../dtos/daily-notes/daily-note-response.dto';
+import { GeneralNoteResponseDto } from '../dtos/general-notes/general-note-response.dto';
 
 @Injectable()
 export class GeneralNotesService {
@@ -25,16 +26,20 @@ export class GeneralNotesService {
         private readonly dailyNotesService: DailyNotesService,
     ){}
 
-    async createGeneralNote(userId: number, newGeneralNote: CreateGeneralNoteDto){
-        const createdGeneralNote = this.generalNoteRepository.create({
+    async createGeneralNote(userId: number, newGeneralNote: CreateGeneralNoteDto)
+    :Promise<GeneralNoteResponseDto> 
+    {
+        const generalNoteToCreate = this.generalNoteRepository.create({
             ...newGeneralNote,
             user:{ id: userId }
         });
         
-        return this.generalNoteRepository.save(createdGeneralNote);
+        const createdGeneralNote = this.generalNoteRepository.save(generalNoteToCreate);
+        return plainToInstance(GeneralNoteResponseDto, createdGeneralNote);
     }
 
-    async updateGeneralNote(userId: number, generalNoteId: number, updateData: UpdateGeneralNoteDto){
+    async updateGeneralNote(userId: number, generalNoteId: number, updateData: UpdateGeneralNoteDto)
+    :Promise<GeneralNoteResponseDto>{
         const existingGenNote = await this.generalNoteRepository.findOne({
             where:{
                 id: generalNoteId,
@@ -42,22 +47,23 @@ export class GeneralNotesService {
             }
         });
 
-        if(existingGenNote)
-           Object.assign(existingGenNote, updateData);
-        else
-            throw new NotFoundException('Generalna obaveza za azuriranje nije pronadjena.');
+        if(!existingGenNote)
+            throw new NotFoundException('Generalna obaveza za ažuriranje nije pronadjena.');
 
-        return this.generalNoteRepository.save(existingGenNote);
+        Object.assign(existingGenNote, updateData);
+        const updatedGeneralNote = this.generalNoteRepository.save(existingGenNote);
+        return plainToInstance(GeneralNoteResponseDto, updatedGeneralNote);
     }
 
-    async deleteGeneralNote(userId, generalNoteId){
+    async deleteGeneralNote(userId, generalNoteId): Promise<{ message: string }> {
         const existingGenNote = await this.generalNoteRepository.findOne({
             where:{
                 id: generalNoteId,
                 user: {id: userId}
             }
         });
-         if (!existingGenNote) {
+
+        if (!existingGenNote) {
             throw new NotFoundException('Generalna beleška koju želite da obrišete nije pronađena.');
         }
 
@@ -88,11 +94,10 @@ export class GeneralNotesService {
     }
 
     async solveGeneralNote(userId: number, generalNoteId: number, dayId: number, createDailyNoteDto: CreateDailyNoteDto,
-    ): Promise<DailyNote>{
+    ): Promise<DailyNoteResponseDto>{
          return this.dataSource.transaction(async (manager) => {
 
-            const generalNoteRepository =
-                manager.getRepository(GeneralNote);
+            const generalNoteRepository = manager.getRepository(GeneralNote);
 
             const generalNote = await generalNoteRepository.findOne({
                 where: {
@@ -101,19 +106,13 @@ export class GeneralNotesService {
                 },
             });
 
-            if (!generalNote) {
-                throw new NotFoundException(
-                    'Generalna obaveza ne postoji!',
-                );
-            }
-            if (generalNote.isDone) {
-                throw new ConflictException(
-                    'Generalna obaveza je već završena!',
-                );
-            }
+            if (!generalNote)
+                throw new NotFoundException('Generalna obaveza ne postoji!',);
+            
+            if (generalNote.isDone) 
+                throw new ConflictException('Generalna obaveza je već završena!');
 
             generalNote.isDone = true;
-
             await generalNoteRepository.save(generalNote);
 
             const dailyNote =
@@ -129,7 +128,7 @@ export class GeneralNotesService {
     }
 
     async updateCategoryForGeneralNote (userId: number, generalNoteId: number, categoryId: number)
-    {
+    : Promise<GeneralNoteResponseDto> {
         const generalNote = await this.generalNoteRepository.findOne({
             where: {
                 id: generalNoteId,
@@ -151,7 +150,8 @@ export class GeneralNotesService {
         
         generalNote.category = category;
 
-        return this.generalNoteRepository.save(generalNote);
+        const updatedGeneralNote = this.generalNoteRepository.save(generalNote);
+        return plainToInstance(GeneralNoteResponseDto, updatedGeneralNote);
     }
 
 }

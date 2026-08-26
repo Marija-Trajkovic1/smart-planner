@@ -11,6 +11,5 @@ export class CategoryController {
     @Get('getListOfCategories')
     async getListOfCategories(): Promise<CategoryResponseDto[]>{
         return this.categoryService.getListOfCategories();
-
     }
 }

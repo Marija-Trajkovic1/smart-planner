@@ -10,8 +10,8 @@ export class Category {
     @Column()
     title: string;
 
-    @Column()
-    icon: string;
+    @Column({nullable: true})
+    icon?: string;
 
     @OneToMany(()=>GeneralNote, (generalNote)=>generalNote.category)
     generalNotes: GeneralNote[];
