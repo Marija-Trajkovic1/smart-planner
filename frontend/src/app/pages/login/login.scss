@@ -8,7 +8,7 @@
   padding: 16px;
   box-sizing: border-box;
 
-  .login-card{
+  .login-card {
     width: 100%;
     max-width: 450px;
     padding: 24px;
@@ -16,20 +16,18 @@
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08) !important;
   }
 
-    .login-card-header {
-        justify-content: center;
-        margin-bottom: 24px;
+  .login-card-header {
+    justify-content: center;
+    margin-bottom: 24px;
 
-        .login-title {
-            font-size: 24px;
-            font-weight: 500;
-            letter-spacing: -0.5px;
-            text-align: center;
-            margin:0;
-        }
+      .login-title {
+        font-size: 24px;
+        font-weight: 500;
+        letter-spacing: -0.5px;
+        text-align: center;
+        margin:0;
+      }
     }
-
-  
 
   .login-card-content {
     display: flex;
@@ -37,14 +35,14 @@
     gap: 20px;
 
     .login-form-field{
-            width: 100%;
+      width: 100%; 
     }
 
     .login-buttons{
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-        margin-top: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 16px;
     }    
   }
 }

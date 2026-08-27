@@ -9,7 +9,7 @@
                     <mat-label>Vaše ime</mat-label>
                     <input matInput 
                         type="text" 
-                        placeholder="Unesite ime" 
+                        placeholder="Unesite Vaše ime" 
                         formControlName="firstName" 
                         required
                     />
@@ -20,7 +20,7 @@
                     <mat-label>Vaše prezime</mat-label>
                     <input matInput 
                         type="text" 
-                        placeholder="Unesite prezime" 
+                        placeholder="Unesite Vaše prezime" 
                         formControlName="lastName" 
                         required
                         />
@@ -31,7 +31,7 @@
                     <mat-label>Vaša email adresa</mat-label>
                     <input matInput 
                         type="email" 
-                        placeholder="Unesite email" 
+                        placeholder="Unesite Vaš email" 
                         formControlName="email" 
                         required
                     />
@@ -39,7 +39,7 @@
                 </mat-form-field>   
 
                 <mat-form-field appearance="outline" class="register-form-field">
-                    <mat-label>Vaša lozinka</mat-label>
+                    <mat-label>Unesite lozinku</mat-label>
                     <input matInput 
                         type="password" 
                         placeholder="Unesite lozinku" 
@@ -51,6 +51,9 @@
 
                 <div class="register-buttons">
                     <button mat-flat-button color="primary" type="submit" >Registruj se</button>
+                    @if (!this.isRegistrationSucceded){
+                        <mat-error>Registracija nije uspela! Pokušajte ponovo!</mat-error>
+                    }
                     <a class="register-redirect" routerLink="/login">Već imate nalog? Prijavite se</a>
                 </div>
             </form>

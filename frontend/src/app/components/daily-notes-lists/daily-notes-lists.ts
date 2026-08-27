@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, input } from '@angular/core';
+import { DayResponseDto } from '../../core/dtos/day-response.model';
 
 @Component({
   selector: 'app-daily-notes-lists',
@@ -6,4 +7,6 @@ import { Component } from '@angular/core';
   templateUrl: './daily-notes-lists.html',
   styleUrl: './daily-notes-lists.scss',
 })
-export class DailyNotesLists {}
+export class DailyNotesLists {
+  days = input<DayResponseDto[]>([]);
+}

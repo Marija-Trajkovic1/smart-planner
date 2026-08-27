@@ -5,7 +5,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatLabel, MatFormField, MatHint } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { Router, RouterLink } from '@angular/router';
-import { RegisterDto } from '../../core/dtos/register.dto';
+import { RegisterDto } from '../../core/dtos/register.model';
 import { Authorization } from '../../core/services/authorization/authorization';
 import { LOGIN } from '../../core/constants/routes.constants';
 
@@ -27,6 +27,7 @@ import { LOGIN } from '../../core/constants/routes.constants';
 export class Register {
   private formBuilder = inject(FormBuilder);
   private authorizationService = inject(Authorization);
+  isRegistrationSucceded = true;
   
   constructor(public router:Router) {}
 
@@ -38,19 +39,22 @@ export class Register {
   });
 
   onRegister(): void{
-    if(this.registerForm.valid){
+    if(this.registerForm.valid) {
       const registrationData: RegisterDto = this.registerForm.value;
       this.authorizationService.register(registrationData).subscribe({
         next: (response) => {
-          console.log('Registration successful:', response);
+          console.log('Registracija uspešna:', response);
+          this.isRegistrationSucceded = true;
           this.router.navigate([LOGIN]);
         },
         error: (error) => {
-          console.error('Registration failed:', error);
+          console.error('Registracija nije uspela:', error);
+          this.isRegistrationSucceded = false;
         }
       });
     } else {
-      console.error('Form is invalid');
+      console.error('Forma nije validna.');
+      this.isRegistrationSucceded = false;
       this.registerForm.markAllAsTouched();
     }
   }

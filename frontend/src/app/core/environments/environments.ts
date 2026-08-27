@@ -3,4 +3,6 @@ export const environment = {
 
   authorizationApiRegisterUrl: 'http://localhost:3000/auth/register',
   authorizationApiLoginUrl: 'http://localhost:3000/auth/login',
+  createNewDayApiUrl: 'http://localhost:3000/day/createDayForUser',
+  
 };

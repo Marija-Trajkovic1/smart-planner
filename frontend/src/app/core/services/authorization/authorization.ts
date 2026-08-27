@@ -1,9 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { RegisterDto } from '../../dtos/register.dto';
+import { RegisterDto } from '../../dtos/register.model';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environments';
-import { LoginDto } from '../../dtos/login.dto';
+import { LoginDto } from '../../dtos/login.model';
 import { Router } from '@angular/router';
 import { ACCESS_TOKEN } from '../../constants/storage.constants';
 import { LOGIN } from '../../constants/routes.constants';

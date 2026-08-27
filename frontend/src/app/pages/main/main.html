@@ -2,16 +2,19 @@
     @if(dailyNotes().length ===0){
         <div class="empty-wellcome-state">
             <mat-card-title class="main-title">Organizujte svoje dane!</mat-card-title>
-            <p>Još uvek nemate kreiranih planova. Započnite sa planiranjem već danas.</p>
-            <button mat-raised-button class="btn-add-plan" (click)="onAddPlan()">
-                Dodaj dnevni plan
+            <p>Još uvek nemate kreiranih planova. Započnite sa planiranjem dodavanjem dana.</p>
+            <button mat-raised-button class="btn-add-plan" (click)="onAddDay()">
+                Dodaj novi dan
             </button>
         </div>
     }
     @else{
         <mat-card-title class="main-title">Pregledajte vaše obaveze po danima</mat-card-title>
-        <app-daily-notes-lists></app-daily-notes-lists>
-        <button mat-fab color="primary" class="fab-add" (click)="onAddPlan()">
+        
+        <button mat-raised-button class="btn-add-plan" (click)="onAddDay()">
+                Dodaj novi dan
         </button>
+
+        <app-daily-notes-lists [days]="dailyNotes()"></app-daily-notes-lists>
     }
 </div>

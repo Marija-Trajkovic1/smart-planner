@@ -14,6 +14,12 @@
                         formControlName="email" 
                         required
                     />
+                    @if (loginForm.get('email')?.hasError('required')) {
+                        <mat-error >Email je obavezan!</mat-error>
+                    }
+                    @if (loginForm.get('email')?.hasError('email')) {
+                    <mat-error>Unesite validnu email adresu!</mat-error>
+                    }
                 </mat-form-field>   
 
                 <mat-form-field appearance="outline" class="login-form-field">
@@ -24,10 +30,17 @@
                         formControlName="password" 
                         required
                     />
+                    @if (loginForm.get('password')?.hasError('required')) {
+                        <mat-error>Lozinka je obavezna!</mat-error>
+                    }
                     
                 </mat-form-field>
                 <div class="login-buttons">
                     <button mat-flat-button color="primary" type="submit" >Prijavi se</button>
+                     @if (!this.isLoginSucces){
+                        <mat-error>Registracija nije uspela! Pokušajte ponovo!</mat-error>
+                    }
+                    
                 </div>
             </form>
 

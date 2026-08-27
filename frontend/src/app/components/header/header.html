@@ -5,14 +5,14 @@
 
   <div class="auth-actions">
     @if(router.url === '/login' || router.url === '/register'){
-        <button mat-button routerLink="/home">Home</button>
+        <button mat-button routerLink="/home">Početna</button>
     }
     @else if (!isLoggedIn()){
-      <button mat-button routerLink="/login">Log In</button>
-      <button mat-raised-button class="btn-register" routerLink="/register">Register</button>
+      <button mat-button routerLink="/login">Prijavi se</button>
+      <button mat-raised-button class="btn-register" routerLink="/register">Registruj se</button>
     }
     @else {
-        <button mat-button (click)="onLogout()">Logout</button>
+        <button mat-button (click)="onLogout()">Odjavi se</button>
     }
   </div>
 </mat-toolbar>

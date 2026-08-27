@@ -29,35 +29,41 @@ export class Login {
   private formBuilder = inject(FormBuilder);
   private authorizationService = inject(Authorization);
   private router = inject(Router);
+  isLoginSucces = true;
 
   loginForm: FormGroup = this.formBuilder.group({
     email: ['', 
-      [Validators.required, 
-        Validators.email]
-      ],
+      [
+        Validators.required, 
+        Validators.email
+      ]],
     password: ['' , 
-      [Validators.required, 
+      [
+        Validators.required, 
         Validators.minLength(8), 
-        Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9]).+$/)]
-      ],
+        Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9]).+$/)
+      ]],
   })
 
-  onLogin():void{
-    if(this.loginForm.valid){
+  onLogin():void {
+    if(this.loginForm.valid) {
       const loginData = this.loginForm.value;
 
       this.authorizationService.login(loginData).subscribe({
         next:(response)=>{
-          console.log('Login usupesan', response);
+          console.log('Prijava uspešna!', response);
+          this.isLoginSucces = true;
           sessionStorage.setItem(ACCESS_TOKEN, response.access_token);
           this.router.navigate([MAIN]);
         },
-        error:(error)=>{
-          console.error('Login neuspesan: ', error);
+        error:(error)=> {
+          this.isLoginSucces = false;
+          console.error('Prijava nije uspela: ', error);
         }
       });
-    }else{
-      console.error('Forma nije ispravna');
+    } else {
+      console.error('Unesite ispravne podatke za prijavu!');
+      this.isLoginSucces = false;
       this.loginForm.markAllAsTouched(); 
     }
   }
