@@ -1,10 +1,11 @@
 <h2 mat-dialog-title>Izaberite datum kako biste kreirali planer za taj dan</h2>
-<mat-dialog-content [formGroup]="dailyNoteForm">
-    <mat-form-field appearance="outline" class="daily-notes-dialog">
+<mat-dialog-content [formGroup]="dayForm">
+    <mat-form-field appearance="outline">
         <mat-label>Datum</mat-label>
         <input 
             matInput 
             [matDatepicker]="picker" 
+            [min]="minDate"
             formControlName="selectedDate"
             (click)="picker.open()" 
             placeholder="Kliknite za izbor datuma"
@@ -16,5 +17,5 @@
 
 <mat-dialog-actions align="end">
   <button mat-button (click)="onCancel()">Otkaži</button>
-  <button mat-raised-button color="primary" [disabled]="dailyNoteForm.invalid" (click)="onSave()">Kreiraj</button>
+  <button mat-raised-button color="primary" [disabled]="dayForm.invalid" (click)="onSave()">Kreiraj</button>
 </mat-dialog-actions>

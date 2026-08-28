@@ -1,17 +1,17 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { DailyNoteDialog } from './daily-note-dialog';
+import { DailyNotesList } from './daily-notes-list';
 
-describe('DailyNoteDialog', () => {
-  let component: DailyNoteDialog;
-  let fixture: ComponentFixture<DailyNoteDialog>;
+describe('DailyNotesList', () => {
+  let component: DailyNotesList;
+  let fixture: ComponentFixture<DailyNotesList>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [DailyNoteDialog],
+      imports: [DailyNotesList],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(DailyNoteDialog);
+    fixture = TestBed.createComponent(DailyNotesList);
     component = fixture.componentInstance;
     await fixture.whenStable();
   });

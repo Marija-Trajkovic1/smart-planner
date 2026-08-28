@@ -5,5 +5,5 @@ export class DayWithDailyNotesResponseDto{
     id:number;
     date:string;
     @Type(()=>DailyNotesForDaysList)
-    notes: DailyNotesForDaysList[];
+    dailyNotes: DailyNotesForDaysList[];
 }

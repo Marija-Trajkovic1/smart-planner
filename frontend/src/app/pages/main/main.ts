@@ -1,15 +1,15 @@
 import { Component, inject, signal } from '@angular/core';
 import { MatCardTitle } from '@angular/material/card';
-import { DailyNotesLists } from '../../components/daily-notes-lists/daily-notes-lists';
+import { DayList } from '../../components/day-list/day-list';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { DailyNoteDialog } from '../../components/daily-note-dialog/daily-note-dialog';
-import { DailyNote } from '../../core/models/daily-note.model';
+import { DayDialog } from '../../components/day-dialog/day-dialog';
 import { ReactiveFormsModule } from '@angular/forms';
 import { Day } from '../../core/services/day/day';
 import { DayResponseDto } from '../../core/dtos/day-response.model';
 import { CreateDayDto } from '../../core/dtos/create-day.model';
-import { formatDateToIsoString } from '../../core/utils/date.utils';
+import { formatDateToIsoString, sortDays } from '../../core/utils/date.utils';
+import { DaysListResponseDto } from '../../core/dtos/days-list-response.model';
 
 @Component({
   selector: 'app-main',
@@ -17,7 +17,7 @@ import { formatDateToIsoString } from '../../core/utils/date.utils';
     MatCardTitle, 
     MatButtonModule,
     MatDialogModule,
-    DailyNotesLists,
+    DayList,
     ReactiveFormsModule
   ],
   templateUrl: './main.html',
@@ -27,12 +27,25 @@ export class Main {
   private dialog = inject(MatDialog);
   private dayService = inject(Day);
 
-  dailyNotes = signal<DayResponseDto[]>([]);
+  days = signal<DaysListResponseDto[]>([]);
+
+  ngOnInit(): void {
+    this.dayService.getAllDaysForUser().subscribe({
+      next: (response: DaysListResponseDto[]) => {
+        console.log('Dani sa beleskama su ucitani', response);
+        const sortedDays = sortDays(response);
+        this.days.set(sortedDays);
+      },
+      error: (err) => {
+        console.log('Greska pri ucitavanju dana', err);
+      }
+    })
+  }
   
   onAddDay(): void {
-    const dialogRef = this.dialog.open(DailyNoteDialog);
+    const dialogRef = this.dialog.open(DayDialog);
 
-    dialogRef.afterClosed().subscribe(((result?: Date )=>{
+    dialogRef.afterClosed().subscribe(((result?: Date) => {
        console.log('Šta je tačno dijalog vratio:', result);
        if (result) {
         console.log('Izabrani datum:', result);
@@ -43,15 +56,21 @@ export class Main {
         this.dayService.createNewDayForUser(newDayData).subscribe({
           next: (response: DayResponseDto) => {
             console.log('Dan uspešno kreiran: ', response);
-            this.dailyNotes.update(currentDays=> [
-              ...currentDays, 
-              response
-            ]);
+
+            const newDayWithNotes: DaysListResponseDto = {
+              id: response.id,
+              date: response.date,
+              dailyNotes: []
+            };
+            
+            this.days.update(currentDays => {
+              const updatedList = [...currentDays, newDayWithNotes];
+              return sortDays(updatedList);
+            });
           },
           error: (err)=> console.log('Greska:', err)
         });
       }
     }))
   }
-
 }

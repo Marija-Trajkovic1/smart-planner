@@ -1,3 +1,5 @@
+import { DaysListResponseDto } from "../dtos/days-list-response.model";
+
 export function formatDateToIsoString(date: Date | string): string {
   if (!date) return '';
   
@@ -7,4 +9,10 @@ export function formatDateToIsoString(date: Date | string): string {
   const day = String(d.getDate()).padStart(2, '0');
   
   return `${year}-${month}-${day}`;
+}
+
+export function sortDays(days: DaysListResponseDto[]): DaysListResponseDto[] {
+  return [...days].sort((a, b) => {
+    return a.date.localeCompare(b.date);
+  });
 }

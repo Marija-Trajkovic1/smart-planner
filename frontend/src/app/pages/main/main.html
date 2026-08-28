@@ -1,5 +1,5 @@
 <div class ="main-container">
-    @if(dailyNotes().length ===0){
+    @if(days().length === 0){
         <div class="empty-wellcome-state">
             <mat-card-title class="main-title">Organizujte svoje dane!</mat-card-title>
             <p>Još uvek nemate kreiranih planova. Započnite sa planiranjem dodavanjem dana.</p>
@@ -15,6 +15,6 @@
                 Dodaj novi dan
         </button>
 
-        <app-daily-notes-lists [days]="dailyNotes()"></app-daily-notes-lists>
+        <app-day-list [days]="days()"></app-day-list>
     }
 </div>

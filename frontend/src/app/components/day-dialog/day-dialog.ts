@@ -3,12 +3,12 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { MatButtonModule } from '@angular/material/button';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatDialogTitle, MatDialogActions, MatDialogRef, MatDialogModule } from '@angular/material/dialog';
-import { MatFormFieldModule, MatLabel } from '@angular/material/form-field';
+import {  MatDialogRef, MatDialogModule } from '@angular/material/dialog';
+import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 
 @Component({
-  selector: 'app-daily-note-dialog',
+  selector: 'app-day-note-dialog',
   imports: [
     MatDialogModule,
     MatFormFieldModule,
@@ -18,25 +18,25 @@ import { MatInputModule } from '@angular/material/input';
     MatButtonModule,
     ReactiveFormsModule
 ],
-  templateUrl: './daily-note-dialog.html',
-  styleUrl: './daily-note-dialog.scss',
+  templateUrl: './day-dialog.html',
+  styleUrl: './day-dialog.scss',
 })
-export class DailyNoteDialog {
+export class DayDialog {
   private formBuilder = inject(FormBuilder);
-  private dialogRef = inject(MatDialogRef<DailyNoteDialog>);
+  private dialogRef = inject(MatDialogRef<DayDialog>);
+  minDate: Date = new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate());
   
-  dailyNoteForm: FormGroup = this.formBuilder.group({
+  dayForm: FormGroup = this.formBuilder.group({
     selectedDate: ['', Validators.required]
   });
 
-  onSave():void{
-    if(this.dailyNoteForm.valid){
-      this.dialogRef.close(this.dailyNoteForm.value.selectedDate);
+  onSave():void {
+    if(this.dayForm.valid) {
+      this.dialogRef.close(this.dayForm.value.selectedDate);
     }
   }
 
-  onCancel(): void{
+  onCancel(): void {
     this.dialogRef.close(null);
-
   }
 }
