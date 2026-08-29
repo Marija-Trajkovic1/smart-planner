@@ -1,9 +1,14 @@
-import { Component } from '@angular/core';
+import { Component, input } from '@angular/core';
+import { DailyNoteResponseDto } from '../../core/dtos/daily-note-response.model';
 
 @Component({
   selector: 'app-daily-note',
-  imports: [],
+  imports: [
+    
+  ],
   templateUrl: './daily-note.html',
   styleUrl: './daily-note.scss',
 })
-export class DailyNote {}
+export class DailyNote {
+  dailyNote = input<DailyNoteResponseDto>();
+}

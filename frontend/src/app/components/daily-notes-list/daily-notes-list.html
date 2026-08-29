@@ -1,1 +1,13 @@
-<p>daily-notes-list works!</p>
+<div class = "daily-list-container">
+    @if(dailyNotesList().length===0){
+        <p>Još uvek nemate unete obaveze za ovaj datum. Probajte sa kreiranjem prve.</p>
+        <button mat-button (click)="onAddNewDailyNote()">Dodaj prvu obavezu za dan</button> 
+    }
+    @else{
+            @for (dailyNote of dailyNotesList(); track dailyNote.id) {
+                <app-daily-note [dailyNote]="dailyNote"></app-daily-note>
+        }
+
+    }
+   
+</div>

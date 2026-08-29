@@ -19,6 +19,7 @@ export class DailynotesController {
     ): Promise<DailyNoteResponseDto> {
         return this.dailyNoteService.createDailyNoteForUserAndDay(userId, dayId, createDailyNoteDto);
     }
+    
     @UseGuards(JwtAuthGuard)
     @Get('getListDailyNotesForDay/:dayId')
     async getListDailyNotesForDay(

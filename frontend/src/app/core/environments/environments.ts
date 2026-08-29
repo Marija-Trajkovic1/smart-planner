@@ -5,6 +5,10 @@ export const environment = {
   authorizationApiLoginUrl: 'http://localhost:3000/auth/login',
   createNewDayApiUrl: 'http://localhost:3000/day/createDayForUser',
   getDaysListForUserApiUrl: 'http://localhost:3000/day/getDaysForUser',
+  getDailyNotesForDayApiUrl: 'http://localhost:3000/dailynotes/getListDailyNotesForDay',
+  getAllCategoriesApiUrl: 'http://localhost:3000/category/getListOfCategories',
+  createNewDailyNoteApiUrl: 'http://localhost:3000/dailynotes/createDailyNoteForUserAndDay'
+  
   
 
 };
