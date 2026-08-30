@@ -16,8 +16,12 @@ export class DailyNoteService {
     return this.http.get<DailyNotesListResponseDto[]>(`${environment.getDailyNotesForDayApiUrl}/${dayId}`);
   }
 
-  createNewDailyNote(dailyNoteToCreate: CreateDailyNoteDto, dayId: number): Observable<DailyNoteResponseDto> {
-    return this.http.post<DailyNoteResponseDto>(`${environment.createNewDailyNoteApiUrl}/${dayId}`, dailyNoteToCreate);
+  createNewDailyNote(dailyNoteToCreate: CreateDailyNoteDto, dayId: number): Observable<DailyNotesListResponseDto> {
+    return this.http.post<DailyNotesListResponseDto>(`${environment.createNewDailyNoteApiUrl}/${dayId}`, dailyNoteToCreate);
+  }
+
+  updateNotesPriorities(payload: { id: number, priority: number }[]): Observable<{message: string}> {
+    return this.http.put<void>(`${environment.updateNotesPrioritiesApiUrl}/update-priorities`, payload);
   }
 
 }

@@ -1,1 +1,93 @@
-<p>daily-note-dialog works!</p>
+<h2 mat-dialog-title>Unesite podatke kako biste kreirali dnevnu obavezu</h2>
+<mat-dialog-content [formGroup]="dailyNoteForm" class="daily-dialog-container">
+
+    <mat-form-field appearance="outline">
+        <mat-label>Naslov dnevne obaveze</mat-label>
+        <input matInput
+            type="text"
+            placeholder="Kupiti mleko i hleb"
+            formControlName="title"
+            required
+        />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+        <mat-label>Vreme obaveze</mat-label>
+        <input matInput
+            type ="time"
+            formControlName="time"
+        />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+        <mat-label>Lokacija obaveze</mat-label>
+        <input matInput
+            type="text"
+            formControlName="location"
+        />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+        <mat-label>Prioritet Vaše obaveze</mat-label>
+        <input matInput
+            type="number"
+            formControlName = "priority"
+        />
+    </mat-form-field>
+
+    <mat-form-field>
+        <mat-label>Link do sajta sa informacijama</mat-label>
+        <input matInput
+            type="text"
+            formControlName = "link"
+        />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+        <mat-label>Stil fonta</mat-label>
+        <mat-select formControlName="textType">
+            @for(style of fontStyles; track style.value) {
+                <mat-option [value]="style.value">{{ style.viewValue }}</mat-option>
+            }
+        </mat-select>
+    </mat-form-field>
+    
+    <mat-form-field appearance="outline">
+        <mat-label>Stil fonta</mat-label>
+        <mat-select formControlName="textType">
+            @for(style of fontStyles; track style.value) {
+                <mat-option [value]="style.value">{{ style.viewValue }}</mat-option>
+            }
+        </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+        <mat-label>Izaberite kategoriju</mat-label>
+        <mat-select formControlName="categoryId">
+            @for(category of categories(); track category.id){
+                <mat-option [value]="category.id">{{category.title}}</mat-option>
+            }
+        </mat-select>
+    </mat-form-field>
+
+    <div class = "checkbox-category">
+        <mat-checkbox formControlName = "isTheMostImportantToday">
+            Obeleži kao najvažniju obavezu za danas
+        </mat-checkbox>
+    </div>
+
+    
+
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+    <button mat-button (click)="onCancel()">
+        Otkaži
+    </button>
+    <button mat-raised-button 
+        color="primary" 
+        [disabled]="dailyNoteForm.invalid" 
+        (click)="onSaveDailyNote()">
+        Kreiraj
+    </button>
+</mat-dialog-actions>

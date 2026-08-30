@@ -1,4 +1,4 @@
-import { Component, input } from '@angular/core';
+import { Component, input, output } from '@angular/core';
 import { DaysListResponseDto } from '../../core/dtos/days-list-response.model';
 import { Day } from '../day/day';
 
@@ -12,4 +12,10 @@ import { Day } from '../day/day';
 })
 export class DayList {
   days = input<DaysListResponseDto[]>([]);
+
+  deleteDayForward = output<number>();
+
+  onForwardDelete(dayId: number): void {
+    this.deleteDayForward.emit(dayId);
+  }
 }

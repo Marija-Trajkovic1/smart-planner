@@ -5,7 +5,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { DayDialog } from '../../components/day-dialog/day-dialog';
 import { ReactiveFormsModule } from '@angular/forms';
-import { Day } from '../../core/services/day/day';
+import { DayService } from '../../core/services/day/day';
 import { DayResponseDto } from '../../core/dtos/day-response.model';
 import { CreateDayDto } from '../../core/dtos/create-day.model';
 import { formatDateToIsoString, sortDays } from '../../core/utils/date.utils';
@@ -25,7 +25,8 @@ import { DaysListResponseDto } from '../../core/dtos/days-list-response.model';
 })
 export class Main {
   private dialog = inject(MatDialog);
-  private dayService = inject(Day);
+  private dayService = inject(DayService);
+  
 
   days = signal<DaysListResponseDto[]>([]);
 
@@ -73,4 +74,16 @@ export class Main {
       }
     }))
   }
+
+  handleDeleteDay(dayId: number): void {
+    this.dayService.deleteDayForUser(dayId).subscribe({
+        next: () => {
+          console.log('Dan uspešno obrisan iz baze.', dayId);
+          this.days.update(currentDays => 
+            currentDays.filter(day => day.id !== dayId)
+          );
+        },
+        error: (err) => console.log('Greška pri brisanju dana na backendu:', err)
+      });
+    }
 }

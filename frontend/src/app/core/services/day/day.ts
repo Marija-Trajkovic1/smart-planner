@@ -10,7 +10,7 @@ import { DaysListResponseDto } from '../../dtos/days-list-response.model';
 @Injectable({
   providedIn: 'root',
 })
-export class Day {
+export class DayService {
   private http = inject(HttpClient);
   
   createNewDayForUser(newDayData:CreateDayDto): Observable<DayResponseDto> {
@@ -20,4 +20,8 @@ export class Day {
   getAllDaysForUser(): Observable<DaysListResponseDto[]> {
     return this.http.get<DaysListResponseDto[]>(`${environment.getDaysListForUserApiUrl}`);
   }
+
+  deleteDayForUser(dayId: number): Observable<{ message: string }>{
+    return this.http.delete<{ message: string }>(`${environment.deleteDayApiUrl}/${dayId}`);
+  } 
 }

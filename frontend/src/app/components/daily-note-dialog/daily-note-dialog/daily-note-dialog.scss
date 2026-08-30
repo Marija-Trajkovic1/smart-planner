@@ -1,0 +1,59 @@
+.daily-dialog-container {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  padding: 16px 4px !important;
+  max-width: 550px;
+  overflow-x: hidden;
+
+  mat-form-field:first-of-type {
+    grid-column: span 2;
+  }
+
+  mat-form-field {
+    width: 100%;
+
+    .mat-mdc-form-field-subscript-wrapper {
+      font-size: 11px;
+    }
+  }
+
+  .checkbox-category {
+    grid-column: span 2;
+    padding: 8px 4px;
+    background-color: #f8f9fa;
+    border-radius: 6px;
+    border: 1px dashed #dee2e6;
+    margin-top: 4px;
+    
+    mat-checkbox {
+      width: 100%;
+      font-weight: 500;
+      color: #495057;
+    }
+  }
+}
+
+h2[mat-dialog-title] {
+  font-size: 20px;
+  font-weight: 600;
+  color: #212529;
+  letter-spacing: -0.5px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #e9ecef; 
+  margin-bottom: 0;
+}
+
+mat-dialog-actions {
+  padding: 16px 24px !important;
+  border-top: 1px solid #e9ecef;
+  background-color: #ffffff;
+  gap: 8px;
+
+  button {
+    padding: 0 20px !important;
+    height: 40px !important;
+    border-radius: 6px !important; 
+    font-weight: 500;
+  }
+}
