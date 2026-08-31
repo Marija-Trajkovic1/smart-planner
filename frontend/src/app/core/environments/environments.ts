@@ -10,6 +10,8 @@ export const environment = {
 
   getDailyNotesForDayApiUrl: 'http://localhost:3000/dailynotes/getListDailyNotesForDay',
   createNewDailyNoteApiUrl: 'http://localhost:3000/dailynotes/createDailyNoteForUserAndDay',
+  updateNotesPrioritiesApiUrl: 'http://localhost:3000/dailynotes/updatePriorities',
+  updateDailyNoteCategoryApiUrl: 'http://localhost:3000/dailynotes/updateCategoryForDailyNote',
 
   getAllCategoriesApiUrl: 'http://localhost:3000/category/getListOfCategories',
   

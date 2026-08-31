@@ -1,0 +1,98 @@
+.matrix-container {
+    padding: 20px;
+
+    .matrix-header {
+        margin-bottom: 20px;
+        display: flex;
+        justify-content: flex-end;
+    }
+}
+
+.empty-state {
+    text-align: center;
+    padding: 40px;
+    background: #f8fafc;
+    border: 2px dashed #cbd5e1;
+    border-radius: 8px;
+    color: #64748b;
+}
+
+.matrix-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(2, minmax(220px, auto));
+    gap: 16px;
+
+    @media (max-width: 768px) {
+        grid-template-columns: 1fr;
+    }
+}
+
+.quadrant {
+    display: flex;
+    flex-direction: column;
+    background: #ffffff;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+
+    .quadrant-title {
+        padding: 12px 16px;
+        font-weight: 600;
+        color: #ffffff;
+        font-size: 0.95rem;
+    }
+
+    .quadrant-body {
+        flex: 1;
+        padding: 12px;
+        background: #f8fafc;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        min-height: 120px;
+    }
+
+    &.q1 .quadrant-title { 
+        background: #f18585;
+        color: #ffffff; 
+    } 
+    &.q2 .quadrant-title { 
+        background: #ffb84d;
+        color: #ffffff; 
+    } 
+    &.q3 .quadrant-title { 
+        background: #70a1ff; 
+        color: #ffffff; 
+    } 
+    &.q4 .quadrant-title { 
+        background: #7bed9f; 
+        color: #ffffff; 
+    }
+}
+
+.drag-wrapper {
+    cursor: grab;
+    &:active {
+        cursor: grabbing; 
+    }
+}
+
+.cdk-drag-preview {
+    box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+    border-radius: 6px;
+    background: #ffffff;
+}
+
+.cdk-drag-placeholder {
+    opacity: 0.2;
+}
+
+.cdk-drag-animating {
+    transition: transform 200ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.quadrant-body.cdk-drop-list-receiving .drag-wrapper:not(.cdk-drag-placeholder) {
+    transition: transform 200ms cubic-bezier(0, 0, 0.2, 1);
+}

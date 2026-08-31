@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, inject, signal, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { DailyNotesListResponseDto } from '../../core/dtos/daily-notes-list-response.model';
 import { DailyNoteService } from '../../core/services/daily-note/daily-note-service';
@@ -8,8 +8,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { DailyNoteDialog } from '../daily-note-dialog/daily-note-dialog/daily-note-dialog';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { CreateDailyNoteDto } from '../../core/dtos/create-daily-note.model';
-import { DailyNoteResponseDto } from '../../core/dtos/daily-note-response.model';
-import { CdkDragDrop, DragDropModule, moveItemInArray } from '@angular/cdk/drag-drop';
+import { CdkDragDrop, DragDropModule, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 
 @Component({
   selector: 'app-daily-notes-list',
@@ -23,106 +22,135 @@ import { CdkDragDrop, DragDropModule, moveItemInArray } from '@angular/cdk/drag-
   templateUrl: './daily-notes-list.html',
   styleUrl: './daily-notes-list.scss',
 })
-export class DailyNotesList {
+export class DailyNotesList implements OnInit {
   private route = inject(ActivatedRoute);
   private dialog = inject(MatDialog);
   private dailyNoteService = inject(DailyNoteService);
 
-  dailyNotesList = signal<DailyNotesListResponseDto[]>([]);
+  // Nezavisni signali za svaki kvadrant matrice
+  q1 = signal<DailyNotesListResponseDto[]>([]);
+  q2 = signal<DailyNotesListResponseDto[]>([]);
+  q3 = signal<DailyNotesListResponseDto[]>([]);
+  q4 = signal<DailyNotesListResponseDto[]>([]);
+
   dayId!: number;
 
-  matrix = computed(()=> {
-    const notes = this.dailyNotesList();
-
-    const getSortedNotes = (categoryId: number)=>{
-      return notes
-        .filter(note => note.category.id===categoryId)
-        .sort((a,b)=>(a.priority ?? 0)-(b.priority ?? 0));
-    }
-
-    return {
-      q1: getSortedNotes(1),
-      q2: getSortedNotes(2),
-      q3: getSortedNotes(3),
-      q4: getSortedNotes(4)
-    }
-  }) 
+  get hasNotes(): boolean {
+    return this.q1().length > 0 || this.q2().length > 0 || this.q3().length > 0 || this.q4().length > 0;
+  }
 
   ngOnInit(): void {
     const idParam = this.route.snapshot.paramMap.get('dayId');
     if(idParam) {
       this.dayId = +idParam;
-      this.dailyNoteService.getDailyNoteListForDay(this.dayId).subscribe({
-         next: (response: DailyNotesListResponseDto[]) => {
-          console.log('Obaveze uspešno učitane za izabrani dan:', response);
-          this.dailyNotesList.set(response);
-        },
-        error: (err) => {
-          console.error('Greška pri učitavanju obaveza:', err);
-        }
-      })
+      this.loadData();
     } 
   }
 
-  onDrop(event: CdkDragDrop<DailyNotesListResponseDto[]>, targetCategoryId: number): void {
+  loadData(): void {
+    this.dailyNoteService.getDailyNoteListForDay(this.dayId).subscribe({
+      next: (response: DailyNotesListResponseDto[]) => {
+        console.log('Podaci sa bekenda stigli:', response);
+        
+        const sortFn = (a: any, b: any) => (a.priority ?? 0) - (b.priority ?? 0);
+        
+        // ISPRAVLJENI ID-JEVI IZ BAZE: 2, 3, 4, 5
+        this.q1.set(response.filter(n => n.category?.id === 2).sort(sortFn));
+        this.q2.set(response.filter(n => n.category?.id === 3).sort(sortFn));
+        this.q3.set(response.filter(n => n.category?.id === 4).sort(sortFn));
+        this.q4.set(response.filter(n => n.category?.id === 5).sort(sortFn));
+      },
+      error: (err) => console.error('Greška pri učitavanju obaveza:', err)
+    });
+  }
+
+    onDrop(event: CdkDragDrop<DailyNotesListResponseDto[]>, targetCategoryId: number): void {
+    console.log('onDrop aktiviran! Ciljna kategorija:', targetCategoryId);
+
     if (event.previousContainer === event.container) {
+      // Slučaj A: Pomeranje unutar istog kvadranta
+      const currentList = [...event.container.data];
+      moveItemInArray(currentList, event.previousIndex, event.currentIndex);
       
-      const currentListInQuadrant = [...event.container.data];
-      moveItemInArray(currentListInQuadrant, event.previousIndex, event.currentIndex);
-      
-      const updatedNotes = currentListInQuadrant.map((note, index) => ({
+      const updatedNotes = currentList.map((note, index) => ({
         ...note,
         priority: index + 1
       }));
 
+      this.updateLocalQuadrantSignal(targetCategoryId, updatedNotes);
       this.updatePrioritiesOnBackend(updatedNotes);
     } else {
-      
-      const movedNote = event.previousContainer.data[event.previousIndex];
+      // Slučaj B: Premeštanje iz jednog kvadranta u drugi
+      const movedNote = event.item.data;
 
-      this.dailyNoteService.updateNoteCategory(movedNote.id, targetCategoryId).subscribe({
+      // 1. Vizuelno prebacujemo element preko CDK funkcije
+      transferArrayItem(
+        event.previousContainer.data,
+        event.container.data,
+        event.previousIndex,
+        event.currentIndex
+      );
+
+      // 2. Prvo menjamo kategoriju na backendu
+      this.dailyNoteService.updateDailyNoteCategory(movedNote.id, targetCategoryId).subscribe({
         next: () => {
-          this.dailyNotesList.update(currentList => 
-            currentList.map(note => note.id === movedNote.id ? { ...note, categoryId: targetCategoryId } : note)
-          );
+          console.log('Kategorija uspešno promenjena u bazi!');
+          
+          // 3. Nakon uspešne promene kategorije, ažuriramo i prioritete za ceo ciljni prozor
+          const targetList = [...event.container.data].map((note, index) => ({
+            ...note,
+            categoryId: targetCategoryId,
+            priority: index + 1
+          }));
+
+          // Osvežavamo lokalni signal za ciljni prozor
+          this.updateLocalQuadrantSignal(targetCategoryId, targetList);
+          
+          // Šaljemo novi redosled prioriteta i za ovaj prozor na backend
+          this.updatePrioritiesOnBackend(targetList);
         },
-        error: (err) => console.log('Greška pri promeni kategorije u bazi:', err)
+        error: (err) => {
+          console.error('Greška pri prebacivanju, vraćam na staro:', err);
+          this.loadData(); // Vraćamo u prvobitno stanje ako pukne
+        }
       });
     }
   }
 
-   private updatePrioritiesOnBackend(updatedNotes: DailyNotesListResponseDto[]): void {
+
+  private updateLocalQuadrantSignal(categoryId: number, notes: DailyNotesListResponseDto[]) {
+    // Mapiranje lokalnog osvežavanja na ID-jeve 2, 3, 4, 5
+    if (categoryId === 2) this.q1.set(notes);
+    if (categoryId === 3) this.q2.set(notes);
+    if (categoryId === 4) this.q3.set(notes);
+    if (categoryId === 5) this.q4.set(notes);
+  }
+
+  private updatePrioritiesOnBackend(updatedNotes: DailyNotesListResponseDto[]): void {
     const priorityPayload = updatedNotes.map((note, index) => ({
       id: note.id,
-      priority: index + 1 // Prva kartica dobija 1, druga 2, treća 3...
+      priority: index + 1
     }));
 
     this.dailyNoteService.updateNotesPriorities(priorityPayload).subscribe({
-      next: () => console.log('Prioriteti uspešno sačuvani na backendu!'),
+      next: () => console.log('Prioriteti sačuvani!'),
       error: (err) => console.error('Greška pri čuvanju prioriteta:', err)
     });
   }
 
   onAddNewDailyNote(): void {
-    console.log('Dugme za dodavanje dnevne beleske radi!');
     const dialogRef = this.dialog.open(DailyNoteDialog);
 
     dialogRef.afterClosed().subscribe(((result?: CreateDailyNoteDto) => {
-      console.log('Dijalog za kreiranje dnevne obaveze je vratio: ', result)
       if(result){
-        
-        const newDailyNote: CreateDailyNoteDto = result;
-
-        this.dailyNoteService.createNewDailyNote(newDailyNote, this.dayId).subscribe({
-          next: (response: DailyNotesListResponseDto) => {
-            console.log('Kreirana je nova obaveza');
-            this.dailyNotesList.update(currentList=> [...currentList, response]);
+        this.dailyNoteService.createNewDailyNote(result, this.dayId).subscribe({
+          next: () => {
+            console.log('Kreirana obaveza');
+            this.loadData();
           },
-          error: (err)=> console.log('Greška pri kreiranju nove dnevne obaveze:', err)
-        })
+          error: (err) => console.log('Greška pri kreiranju:', err)
+        });
       }
-    }))
-
-
+    }));
   }
 }

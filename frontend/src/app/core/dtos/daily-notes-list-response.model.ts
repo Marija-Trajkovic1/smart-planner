@@ -14,4 +14,4 @@ export interface DailyNotesListResponseDto {
     textHeight: number;
 
     category: CategoryResponseDto;
-}
+}   

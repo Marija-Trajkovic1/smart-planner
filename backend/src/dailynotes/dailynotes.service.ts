@@ -8,6 +8,7 @@ import { Category } from '../category/category.entity';
 import { UpdateDailyNoteDto } from '../dtos/daily-notes/update-daily-note.dto';
 import { DailyNoteResponseDto } from '../dtos/daily-notes/daily-note-response.dto';
 import { plainToInstance } from 'class-transformer';
+import { UpdatePriorityDto } from '../dtos/daily-notes/update-priority.dto';
 
 @Injectable()
 export class DailyNotesService {
@@ -104,7 +105,7 @@ export class DailyNotesService {
         const dailyNote =  await this.findDailyNote(dailyNoteId, userId);
 
         if (!dailyNote)
-            throw new NotFoundException('Generalna beleška ne postoji!');
+            throw new NotFoundException('Dnevna beleška ne postoji!');
 
         const category = await this.categoryRepository.findOne({
             where: {
@@ -117,7 +118,7 @@ export class DailyNotesService {
         
         dailyNote.category = category;
 
-        const updatedDailyNote = this.dailyNoteRepository.save(dailyNote);
+        const updatedDailyNote = await this.dailyNoteRepository.save(dailyNote);
         return plainToInstance(DailyNoteResponseDto, updatedDailyNote);
     }
 
@@ -194,4 +195,12 @@ export class DailyNotesService {
         });
         return dailyNote;
     }
+
+    async updatePriorities(dtos: UpdatePriorityDto[]): Promise<void> {
+        await Promise.all(
+            dtos.map(dto =>
+                this.dailyNoteRepository.update(dto.id, { priority: dto.priority }),
+            ),
+        );
+  }
 }

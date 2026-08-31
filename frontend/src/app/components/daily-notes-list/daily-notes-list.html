@@ -6,7 +6,7 @@
         </button> 
     </div>
 
-    @if(dailyNotesList().length === 0){
+    @if(!hasNotes){
         <div class="empty-state">
             <p>Još uvek nemate unete obaveze za ovaj datum. Probajte sa kreiranjem prve.</p>
         </div>
@@ -14,64 +14,60 @@
     @else {
         <div class="matrix-grid">
             
-            <!-- KVADRANT 1: Hitno & Bitno (categoryId = 1) -->
             <div class="quadrant q1">
-                <div class="quadrant-title">🔥 Hitno & Bitno</div>
+                <div class="quadrant-title">🔥Uradi (Hitno, bitno)</div>
                 <div class="quadrant-body"
                      cdkDropList
-                     [cdkDropListData]="matrix().q1"
-                     (cdkDropListDropped)="onDrop($event, 1)">
+                     [cdkDropListData]="q1()"
+                     (cdkDropListDropped)="onDrop($event, 2)">
                     
-                    @for (dailyNote of matrix().q1; track dailyNote.id) {
-                        <div cdkDrag class="drag-wrapper">
+                    @for (dailyNote of q1(); track dailyNote.id) {
+                        <div cdkDrag [cdkDragData]="dailyNote" class="drag-wrapper">
                             <app-daily-note [dailyNote]="dailyNote"></app-daily-note>
                         </div>
                     }
                 </div>
             </div>
 
-            <!-- KVADRANT 2: Nije hitno & Bitno (categoryId = 2) -->
             <div class="quadrant q2">
                 <div class="quadrant-title">📅 Planiraj (Bitno, nije hitno)</div>
                 <div class="quadrant-body"
                      cdkDropList
-                     [cdkDropListData]="matrix().q2"
-                     (cdkDropListDropped)="onDrop($event, 2)">
+                     [cdkDropListData]="q2()"
+                     (cdkDropListDropped)="onDrop($event, 3)">
                     
-                    @for (dailyNote of matrix().q2; track dailyNote.id) {
-                        <div cdkDrag class="drag-wrapper">
+                    @for (dailyNote of q2(); track dailyNote.id) {
+                        <div cdkDrag [cdkDragData]="dailyNote" class="drag-wrapper">
                             <app-daily-note [dailyNote]="dailyNote"></app-daily-note>
                         </div>
                     }
                 </div>
             </div>
 
-            <!-- KVADRANT 3: Hitno & Nije bitno (categoryId = 3) -->
             <div class="quadrant q3">
                 <div class="quadrant-title">🙋‍♂️ Delegiraj (Hitno, nije bitno)</div>
                 <div class="quadrant-body"
                      cdkDropList
-                     [cdkDropListData]="matrix().q3"
-                     (cdkDropListDropped)="onDrop($event, 3)">
+                     [cdkDropListData]="q3()"
+                     (cdkDropListDropped)="onDrop($event, 4)">
                     
-                    @for (dailyNote of matrix().q3; track dailyNote.id) {
-                        <div cdkDrag class="drag-wrapper">
+                    @for (dailyNote of q3(); track dailyNote.id) {
+                        <div cdkDrag [cdkDragData]="dailyNote" class="drag-wrapper">
                             <app-daily-note [dailyNote]="dailyNote"></app-daily-note>
                         </div>
                     }
                 </div>
             </div>
 
-            <!-- KVADRANT 4: Nije hitno & Nije bitno (categoryId = 4) -->
             <div class="quadrant q4">
                 <div class="quadrant-title">🗑️ Eliminiši (Nije hitno, nije bitno)</div>
                 <div class="quadrant-body"
                      cdkDropList
-                     [cdkDropListData]="matrix().q4"
-                     (cdkDropListDropped)="onDrop($event, 4)">
+                     [cdkDropListData]="q4()"
+                     (cdkDropListDropped)="onDrop($event, 5)">
                     
-                    @for (dailyNote of matrix().q4; track dailyNote.id) {
-                        <div cdkDrag class="drag-wrapper">
+                    @for (dailyNote of q4(); track dailyNote.id) {
+                        <div cdkDrag [cdkDragData]="dailyNote" class="drag-wrapper">
                             <app-daily-note [dailyNote]="dailyNote"></app-daily-note>
                         </div>
                     }

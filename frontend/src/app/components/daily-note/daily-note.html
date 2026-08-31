@@ -1,1 +1,46 @@
-<p>daily-note works!</p>
+<div class="note-card" 
+     [class.is-done]="dailyNote().isDone" 
+     [class.most-important]="dailyNote().isTheMostImportantToday">
+  
+  <div class="note-left-section">
+    <input type="checkbox" 
+           [checked]="dailyNote().isDone" 
+           (change)="onToggleDone($event)" 
+           class="note-checkbox">
+    
+    <div class="note-info">
+      <div class="title-row">
+        <h4 class="note-title">{{ dailyNote().title }}</h4>
+        @if (dailyNote().isTheMostImportantToday) {
+          <span class="star-badge" title="Najvažnija obaveza danas">⭐</span>
+        }
+      </div>
+      
+      <div class="meta-row">
+        @if (dailyNote().time) {
+          <span class="meta-item time">⏰ {{ dailyNote().time }}</span>
+        }
+        @if (dailyNote().location) {
+          <span class="meta-item location">📍 {{ dailyNote().location }}</span>
+        }
+      </div>
+    </div>
+  </div>
+  
+  <div class="note-right-section">
+    @if (dailyNote().link) {
+      <a [href]="dailyNote().link" target="_blank" class="action-icon link-icon" title="Otvori link" (click)="$event.stopPropagation()">
+        🔗
+      </a>
+    }
+    
+    @if (dailyNote().reminder) {
+      <span class="action-icon reminder-icon" title="Podsetnik je uključen">🔔</span>
+    }
+    
+    <button class="delete-btn" (click)="$event.stopPropagation(); onDelete(dailyNote().id)" title="Obriši">
+      <mat-icon>delete_outline</mat-icon> <!-- Sada koristiš MatIcon koji si uvezla -->
+    </button>
+  </div>
+
+</div>
