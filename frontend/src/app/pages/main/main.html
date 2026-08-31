@@ -1,20 +1,66 @@
-<div class ="main-container">
-    @if(days().length === 0){
-        <div class="empty-wellcome-state">
-            <mat-card-title class="main-title">Organizujte svoje dane!</mat-card-title>
-            <p>Još uvek nemate kreiranih planova. Započnite sa planiranjem dodavanjem dana.</p>
-            <button mat-raised-button class="btn-add-plan" (click)="onAddDay()">
-                Dodaj novi dan
+<div class="main-container">
+    <h2 class="calendar-hint">
+        Kliknite na zaokruženi datum za pregled obaveza
+        ili na prazan datum da kreirate plan za taj dan
+    </h2>
+
+    <div class="custom-calendar">
+        <div class="calendar-header-row">
+            <button mat-icon-button
+                (click)="changeMonth(-1)"
+                aria-label="Prethodni mesec">
+                <mat-icon>chevron_left</mat-icon>
+            </button>
+
+            <h2 class="current-month-title">
+                {{ currentDate() | date: 'MMMM yyyy' }}
+            </h2>
+
+            <button mat-icon-button
+                (click)="changeMonth(1)"
+                aria-label="Sledeći mesec">
+                <mat-icon>chevron_right</mat-icon>
             </button>
         </div>
-    }
-    @else{
-        <mat-card-title class="main-title">Pregledajte vaše obaveze po danima</mat-card-title>
-        
-        <button mat-raised-button class="btn-add-plan" (click)="onAddDay()">
-                Dodaj novi dan
-        </button>
 
-        <app-day-list [days]="days()" (deleteDayForward)="handleDeleteDay($event)"></app-day-list>
-    }
+        <div class="calendar-weekdays">
+            @for (dayName of weekDays; track dayName) {
+                <div class="weekday-name">
+                    {{ dayName }}
+                </div>
+            }
+        </div>
+
+        <div class="calendar-days-grid">
+            @for (cell of calendarGrid(); track $index) {
+                <div
+                    class="calendar-cell"
+                    [class.empty-cell]="!cell.dayNumber"
+                    [class.day-has-plan]="cell.hasPlan"
+                    [class.is-today]="cell.isToday"
+                    (click)="onCellClick(cell)"
+                >
+                    @if (cell.dayNumber) {
+                        <div class="day-number-circle">
+                            <span class="day-number-span">
+                                {{ cell.dayNumber }}
+                            </span>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+
+        <div class="calendar-legend">
+            <div class="legend-item">
+                <span class="legend-circle plan"></span>
+                <span>Kreiran dan</span>
+            </div>
+
+            <div class="legend-item">
+                <span class="legend-circle today"></span>
+                <span>Danas</span>
+            </div>
+        </div>
+    </div>
 </div>

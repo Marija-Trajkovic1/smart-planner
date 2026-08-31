@@ -12,7 +12,8 @@
       <button mat-raised-button class="btn-register" routerLink="/register">Registruj se</button>
     }
     @else {
-        <button mat-button (click)="onLogout()">Odjavi se</button>
+      <button mat-button (click)="goToCalendar()">Kalendar</button>
+      <button mat-button (click)="onLogout()">Odjavi se</button>
     }
   </div>
 </mat-toolbar>

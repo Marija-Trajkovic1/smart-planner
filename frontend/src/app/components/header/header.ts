@@ -8,7 +8,12 @@ import { ACCESS_TOKEN } from '../../core/constants/storage.constants';
 
 @Component({
   selector: 'app-header',
-  imports: [MatToolbarModule, MatButtonModule, MatIconModule, RouterLink],
+  imports: [
+    MatToolbarModule, 
+    MatButtonModule, 
+    MatIconModule, 
+    RouterLink
+  ],
   templateUrl: './header.html',
   styleUrl: './header.scss',
 })
@@ -27,5 +32,9 @@ export class Header {
     sessionStorage.removeItem(ACCESS_TOKEN);
     this.isLoggedIn.set(false);
     this.router.navigate([LOGIN]);
+  }
+
+  goToCalendar(): void {
+    this.router.navigate(['/main']);
   }
 }
