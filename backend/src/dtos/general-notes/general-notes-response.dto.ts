@@ -5,7 +5,4 @@ export class GeneralNotesResponseDto{
     title: string;
     priority: number;
     isDone: boolean;
-
-    @Type(() => CategoryResponseDto)
-    category?: CategoryResponseDto;
 }

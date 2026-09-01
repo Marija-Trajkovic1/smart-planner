@@ -129,7 +129,7 @@ export class DailyNotesService {
             throw new NotFoundException('Dnevna beleška nije pronađena.');
         }
        
-        dailyNoteForFinish.isDone = true;
+        dailyNoteForFinish.isDone = !dailyNoteForFinish.isDone;
         const updatedDailyNote = this.dailyNoteRepository.save(dailyNoteForFinish);
         return plainToInstance(DailyNoteResponseDto, updatedDailyNote);
     }

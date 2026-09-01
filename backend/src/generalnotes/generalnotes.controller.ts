@@ -58,15 +58,4 @@ export class GeneralNotesController {
         return this.generalNotesService.getListOfGeneralNotesForUser(userId);
     }
 
-    @UseGuards(JwtAuthGuard)
-    @Put('updateCategoryForGeneralNote/:generalNoteId/:categoryId')
-    async updateCategoryForGeneralNote(
-        @GetUser('id') userId: number,
-        @Param('generalNoteId') generalNoteId: number,
-        @Param('categoryId') categoryId: number
-    ){
-        return this.generalNotesService.updateCategoryForGeneralNote( userId, generalNoteId, categoryId);
-    }
-
-
 }

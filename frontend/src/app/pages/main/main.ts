@@ -1,11 +1,8 @@
 import { Component, inject, signal, OnInit, computed } from '@angular/core';
 import { Router } from '@angular/router';
-import { MatCardTitle } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
-import { MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { CommonModule, DatePipe } from '@angular/common';
-
 import { DayService } from '../../core/services/day/day';
 import { DaysListResponseDto } from '../../core/dtos/days-list-response.model';
 import { DayResponseDto } from '../../core/dtos/day-response.model';
@@ -18,9 +15,7 @@ import { getInitialCalendarDate, saveCalendarDate } from '../../core/utils/calen
   selector: 'app-main',
   imports: [
     CommonModule,
-    MatCardTitle,
     MatButtonModule,
-    MatDialogModule,
     MatIconModule,
     DatePipe
   ],
@@ -34,7 +29,7 @@ export class Main implements OnInit {
   days = signal<DaysListResponseDto[]>([]);
   currentDate = signal<Date>(getInitialCalendarDate());
 
-  weekDays = ['Pon', 'Uto', 'Sre', 'Čet', 'Pet', 'Sub', 'Ned'];
+  readonly weekDays = ['Pon', 'Uto', 'Sre', 'Čet', 'Pet', 'Sub', 'Ned'];
 
   calendarGrid = computed<CalendarCell[]>(() => {
     const date = this.currentDate();
@@ -151,14 +146,14 @@ export class Main implements OnInit {
 
   changeMonth(direction: number): void {
     this.currentDate.update(date => {
-    const newDate = new Date(
-      date.getFullYear(),
-      date.getMonth() + direction,
-      1
-    )
-    saveCalendarDate(newDate);
-    return newDate;
-  });
+      const newDate = new Date(
+        date.getFullYear(),
+        date.getMonth() + direction,
+        1
+      )
+      saveCalendarDate(newDate);
+      return newDate;
+    });
   }
 
   private onAddDayDirectly(targetDate: Date): void {

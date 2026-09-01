@@ -5,10 +5,11 @@ import { DailyNoteService } from '../../core/services/daily-note/daily-note-serv
 import { DailyNote } from '../daily-note/daily-note';
 import { MatButtonModule } from '@angular/material/button';
 import { ReactiveFormsModule } from '@angular/forms';
-import { DailyNoteDialog } from '../daily-note-dialog/daily-note-dialog/daily-note-dialog';
+import { DailyNoteDialog } from '../daily-note-dialog/daily-note-dialog';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { CreateDailyNoteDto } from '../../core/dtos/create-daily-note.model';
 import { CdkDragDrop, DragDropModule, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
+import { DailyNoteForUpdate } from '../../core/dtos/daily-note-update.model';
 
 @Component({
   selector: 'app-daily-notes-list',
@@ -27,7 +28,6 @@ export class DailyNotesList implements OnInit {
   private dialog = inject(MatDialog);
   private dailyNoteService = inject(DailyNoteService);
 
-  // Nezavisni signali za svaki kvadrant matrice
   q1 = signal<DailyNotesListResponseDto[]>([]);
   q2 = signal<DailyNotesListResponseDto[]>([]);
   q3 = signal<DailyNotesListResponseDto[]>([]);
@@ -54,7 +54,6 @@ export class DailyNotesList implements OnInit {
         
         const sortFn = (a: any, b: any) => (a.priority ?? 0) - (b.priority ?? 0);
         
-        // ISPRAVLJENI ID-JEVI IZ BAZE: 2, 3, 4, 5
         this.q1.set(response.filter(n => n.category?.id === 2).sort(sortFn));
         this.q2.set(response.filter(n => n.category?.id === 3).sort(sortFn));
         this.q3.set(response.filter(n => n.category?.id === 4).sort(sortFn));
@@ -64,11 +63,10 @@ export class DailyNotesList implements OnInit {
     });
   }
 
-    onDrop(event: CdkDragDrop<DailyNotesListResponseDto[]>, targetCategoryId: number): void {
+  onDrop(event: CdkDragDrop<DailyNotesListResponseDto[]>, targetCategoryId: number): void {
     console.log('onDrop aktiviran! Ciljna kategorija:', targetCategoryId);
 
     if (event.previousContainer === event.container) {
-      // Slučaj A: Pomeranje unutar istog kvadranta
       const currentList = [...event.container.data];
       moveItemInArray(currentList, event.previousIndex, event.currentIndex);
       
@@ -80,10 +78,8 @@ export class DailyNotesList implements OnInit {
       this.updateLocalQuadrantSignal(targetCategoryId, updatedNotes);
       this.updatePrioritiesOnBackend(updatedNotes);
     } else {
-      // Slučaj B: Premeštanje iz jednog kvadranta u drugi
       const movedNote = event.item.data;
 
-      // 1. Vizuelno prebacujemo element preko CDK funkcije
       transferArrayItem(
         event.previousContainer.data,
         event.container.data,
@@ -91,35 +87,29 @@ export class DailyNotesList implements OnInit {
         event.currentIndex
       );
 
-      // 2. Prvo menjamo kategoriju na backendu
       this.dailyNoteService.updateDailyNoteCategory(movedNote.id, targetCategoryId).subscribe({
         next: () => {
           console.log('Kategorija uspešno promenjena u bazi!');
-          
-          // 3. Nakon uspešne promene kategorije, ažuriramo i prioritete za ceo ciljni prozor
+
           const targetList = [...event.container.data].map((note, index) => ({
             ...note,
             categoryId: targetCategoryId,
             priority: index + 1
           }));
 
-          // Osvežavamo lokalni signal za ciljni prozor
           this.updateLocalQuadrantSignal(targetCategoryId, targetList);
           
-          // Šaljemo novi redosled prioriteta i za ovaj prozor na backend
           this.updatePrioritiesOnBackend(targetList);
         },
         error: (err) => {
           console.error('Greška pri prebacivanju, vraćam na staro:', err);
-          this.loadData(); // Vraćamo u prvobitno stanje ako pukne
+          this.loadData();
         }
       });
     }
   }
 
-
   private updateLocalQuadrantSignal(categoryId: number, notes: DailyNotesListResponseDto[]) {
-    // Mapiranje lokalnog osvežavanja na ID-jeve 2, 3, 4, 5
     if (categoryId === 2) this.q1.set(notes);
     if (categoryId === 3) this.q2.set(notes);
     if (categoryId === 4) this.q3.set(notes);
@@ -152,5 +142,84 @@ export class DailyNotesList implements OnInit {
         });
       }
     }));
+  }
+
+  onDeleteDailyNote(id: number): void {
+    console.log('Kliknuta kantica, ID:', id);
+    if (!confirm('Da li ste sigurni da želite da obrišete ovu obavezu?')) {
+      return;
+    }
+
+    let targetCategoryId = 0;
+    let currentQuadrantNotes: DailyNotesListResponseDto[] = [];
+
+    if (this.q1().some(n => n.id === id)) { targetCategoryId = 2; currentQuadrantNotes = [...this.q1()]; }
+    else if (this.q2().some(n => n.id === id)) { targetCategoryId = 3; currentQuadrantNotes = [...this.q2()]; }
+    else if (this.q3().some(n => n.id === id)) { targetCategoryId = 4; currentQuadrantNotes = [...this.q3()]; }
+    else if (this.q4().some(n => n.id === id)) { targetCategoryId = 5; currentQuadrantNotes = [...this.q4()]; }
+
+    this.dailyNoteService.deleteDailyNote(id).subscribe({
+      next: (response) => {
+        console.log(response.message);
+        const filteredNotes = currentQuadrantNotes.filter(n => n.id !== id);
+        const updatedNotes = filteredNotes.map((note, index) => ({
+          ...note,
+          priority: index + 1
+        }));
+
+        this.updateLocalQuadrantSignal(targetCategoryId, updatedNotes);
+
+        if (updatedNotes.length > 0) {
+          this.updatePrioritiesOnBackend(updatedNotes);
+        }
+      },
+      error: (err) => {
+        console.error('Greška pri brisanju obaveze:', err);
+        this.loadData();
+      }
+    });
+  }
+
+  onToggleDailyNoteDone(event: { id: number; isDone: boolean }): void {
+    this.dailyNoteService.finishDailyNote(event.id).subscribe({
+      next: (updatedNote) => {
+        console.log('Obaveza uspešno završena na bekendu');
+
+        const updateStatus = (notes: DailyNotesListResponseDto[]) => 
+          notes.map(n => n.id === event.id ? { ...n, isDone: event.isDone } : n);
+
+        this.q1.update(updateStatus);
+        this.q2.update(updateStatus);
+        this.q3.update(updateStatus);
+        this.q4.update(updateStatus);
+      },
+      error: (err) => {
+        console.error('Greška pri završavanju obaveze:', err);
+        this.loadData();
+      }
+    });
+  }
+
+  onUpdateDailyNote(note: DailyNotesListResponseDto): void {
+    console.log('Otvaram izmenu za obavezu:', note);
+
+    const dialogRef = this.dialog.open(DailyNoteDialog, {
+      width: '500px',
+      data: { note: note }
+    });
+
+    dialogRef.afterClosed().subscribe((result: DailyNoteForUpdate | undefined) => {
+      if (result) {
+        console.log('Podaci spremni za slanje na bekend:', result);
+          
+        this.dailyNoteService.updateDailyNote(note.id, result).subscribe({
+          next: () => {
+            console.log('Obaveza uspešno ažurirana na bekendu!');
+            this.loadData(); 
+          },
+          error: (err) => console.error('Greška prilikom ažuriranja obaveze:', err)
+        });
+      }
+    });
   }
 }

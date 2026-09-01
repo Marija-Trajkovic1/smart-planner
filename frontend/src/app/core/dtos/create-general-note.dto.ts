@@ -1,4 +1,4 @@
-export class CreateGeneralNoteDto{
+export interface CreateGeneralNoteDto{
     title: string;
     priority?: number;
 }

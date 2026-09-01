@@ -15,9 +15,14 @@ export class DailyNote {
 
   deleteNote = output<number>();
   toggleDone = output<{ id: number; isDone: boolean }>();
+  editNote = output<DailyNotesListResponseDto>();
 
   onDelete(id: number): void {
     this.deleteNote.emit(id);
+  }
+
+  onEdit(note: DailyNotesListResponseDto): void {
+    this.editNote.emit(note); 
   }
 
   onToggleDone(event: Event): void {

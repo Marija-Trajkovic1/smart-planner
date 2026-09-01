@@ -23,7 +23,12 @@
                     
                     @for (dailyNote of q1(); track dailyNote.id) {
                         <div cdkDrag [cdkDragData]="dailyNote" class="drag-wrapper">
-                            <app-daily-note [dailyNote]="dailyNote"></app-daily-note>
+                            <app-daily-note 
+                                [dailyNote]="dailyNote" 
+                                (editNote)="onUpdateDailyNote($event)"
+                                (deleteNote)="onDeleteDailyNote($event)"
+                                (toggleDone)="onToggleDailyNoteDone($event)"
+                            ></app-daily-note>
                         </div>
                     }
                 </div>
@@ -38,7 +43,12 @@
                     
                     @for (dailyNote of q2(); track dailyNote.id) {
                         <div cdkDrag [cdkDragData]="dailyNote" class="drag-wrapper">
-                            <app-daily-note [dailyNote]="dailyNote"></app-daily-note>
+                            <app-daily-note 
+                                [dailyNote]="dailyNote" 
+                                (editNote)="onUpdateDailyNote($event)"
+                                (deleteNote)="onDeleteDailyNote($event)"
+                                (toggleDone)="onToggleDailyNoteDone($event)"
+                            ></app-daily-note>
                         </div>
                     }
                 </div>
@@ -53,7 +63,12 @@
                     
                     @for (dailyNote of q3(); track dailyNote.id) {
                         <div cdkDrag [cdkDragData]="dailyNote" class="drag-wrapper">
-                            <app-daily-note [dailyNote]="dailyNote"></app-daily-note>
+                            <app-daily-note 
+                                [dailyNote]="dailyNote" 
+                                (editNote)="onUpdateDailyNote($event)"
+                                (deleteNote)="onDeleteDailyNote($event)"
+                                (toggleDone)="onToggleDailyNoteDone($event)"
+                            ></app-daily-note>
                         </div>
                     }
                 </div>
@@ -68,7 +83,12 @@
                     
                     @for (dailyNote of q4(); track dailyNote.id) {
                         <div cdkDrag [cdkDragData]="dailyNote" class="drag-wrapper">
-                            <app-daily-note [dailyNote]="dailyNote"></app-daily-note>
+                            <app-daily-note 
+                                [dailyNote]="dailyNote" 
+                                (editNote)="onUpdateDailyNote($event)"
+                                (deleteNote)="onDeleteDailyNote($event)"
+                                (toggleDone)="onToggleDailyNoteDone($event)"
+                            ></app-daily-note>
                         </div>
                     }
                 </div>

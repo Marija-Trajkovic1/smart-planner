@@ -37,9 +37,13 @@
     @if (dailyNote().reminder) {
       <span class="action-icon reminder-icon" title="Podsetnik je uključen">🔔</span>
     }
+
+    <button class="edit-btn" (click)="$event.stopPropagation(); onEdit(dailyNote())" title="Izmeni">
+      <mat-icon>edit</mat-icon>
+    </button>
     
     <button class="delete-btn" (click)="$event.stopPropagation(); onDelete(dailyNote().id)" title="Obriši">
-      <mat-icon>delete_outline</mat-icon> <!-- Sada koristiš MatIcon koji si uvezla -->
+      <mat-icon>delete_outline</mat-icon> 
     </button>
   </div>
 

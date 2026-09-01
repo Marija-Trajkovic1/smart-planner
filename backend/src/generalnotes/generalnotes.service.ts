@@ -85,9 +85,6 @@ export class GeneralNotesService {
                             id: userId,
                         },
                     },
-                    relations: {
-                        category: true,
-                    },
                 });
         
         return plainToInstance(GeneralNotesResponseDto, generalNotes);
@@ -125,33 +122,6 @@ export class GeneralNotesService {
 
             return dailyNote;
         });
-    }
-
-    async updateCategoryForGeneralNote (userId: number, generalNoteId: number, categoryId: number)
-    : Promise<GeneralNoteResponseDto> {
-        const generalNote = await this.generalNoteRepository.findOne({
-            where: {
-                id: generalNoteId,
-                user: { id: userId },
-            },
-        });
-
-        if (!generalNote)
-            throw new NotFoundException('Generalna beleška ne postoji!');
-
-        const category = await this.categoryRepository.findOne({
-            where: {
-                id: categoryId,
-            },
-        });
-        
-        if (!category) 
-            throw new NotFoundException('Kategorija ne postoji!');
-        
-        generalNote.category = category;
-
-        const updatedGeneralNote = this.generalNoteRepository.save(generalNote);
-        return plainToInstance(GeneralNoteResponseDto, updatedGeneralNote);
     }
 
 }

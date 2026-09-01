@@ -1,6 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
 import { User } from '../user/user.entity';
-import { Category } from '../category/category.entity';
 
 @Entity('generalnotes')
 export class GeneralNote {
@@ -18,10 +17,5 @@ export class GeneralNote {
 
     @ManyToOne(()=>User, (user)=>user.generalNotes, {onDelete: 'CASCADE'})
     user: User;
-
-    @ManyToOne(()=>Category, (category)=>category.generalNotes, {nullable: true, onDelete: 'SET NULL'})
-    category?: Category;
-    
-
 
 }
