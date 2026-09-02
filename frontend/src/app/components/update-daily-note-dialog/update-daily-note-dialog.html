@@ -1,0 +1,85 @@
+<h2 mat-dialog-title>{{ data.note.title }}</h2>
+
+<mat-dialog-content>
+  <div class="fixed-details">
+    <p><strong>Prioritet:</strong> {{ data.note.priority ?? 'Nije setovan' }}</p>
+    
+    <p>
+      <strong>Da li je najvažnija obaveza danas:</strong> 
+      @if (data.note.isTheMostImportantToday) {
+        <span class="star-badge" title="Najvažnija obaveza danas">⭐ Da</span>
+      } @else {
+        <span>Ne</span>
+      }
+    </p>
+  </div>
+
+  <hr class="separator" />
+
+  <form [formGroup]="updateDailyNoteForm" class="dialog-form">
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Naslov</mat-label>
+      <input matInput formControlName="title" placeholder="Unesite naslov" />
+      @if (updateDailyNoteForm.get('title')?.hasError('required')) {
+        <mat-error>Naslov je obavezan</mat-error>
+      }
+    </mat-form-field>
+
+    <div class="time-row">
+      <mat-form-field appearance="outline">
+        <mat-label>Sati</mat-label>
+        <mat-select formControlName="selectedHour">
+          <mat-option [value]="null">--</mat-option>
+          @for (hour of hoursList; track hour) {
+            <mat-option [value]="hour">{{ hour }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Minuti</mat-label>
+        <mat-select formControlName="selectedMinute">
+          <mat-option [value]="null">--</mat-option>
+          @for (minute of minutesList; track minute) {
+            <mat-option [value]="minute">{{ minute }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Lokacija</mat-label>
+      <input matInput formControlName="location" placeholder="Унесите локацију" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Link</mat-label>
+      <input matInput formControlName="link" placeholder="https://..." />
+    </mat-form-field>
+
+    <div class="advanced-row">
+      <mat-form-field appearance="outline">
+        <mat-label>Font teksta</mat-label>
+        <mat-select formControlName="textType">
+          <mat-option value="PLAIN">Plain</mat-option>
+          <mat-option value="RICH">Rich Text</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Veličina teksta (px)</mat-label>
+        <input matInput type="number" formControlName="textHeight" />
+      </mat-form-field>
+    </div>
+
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()">Zatvori</button>
+  <button mat-raised-button color="primary" 
+          (click)="onSaveUpdate()" 
+          [disabled]="updateDailyNoteForm.invalid">
+    Sačuvaj
+  </button>
+</mat-dialog-actions>

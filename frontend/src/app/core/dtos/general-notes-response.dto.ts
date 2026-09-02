@@ -1,6 +1,5 @@
-import { CategoryResponseDto } from "./category-response.model";
-
-export interface GeneralNotesResponseDto {
+ export interface GeneralNotesResponseDto {
+    id: number;
     title: string;
     priority: number;
     isDone: boolean;

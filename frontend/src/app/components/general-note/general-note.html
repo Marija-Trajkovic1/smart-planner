@@ -1,1 +1,16 @@
-<p>general-note works!</p>
+<div class="note-container">
+    <div class="note-content">
+        <h2>{{generalNote().title}}</h2>
+        <mat-label>{{generalNote().priority}}</mat-label>   
+    </div>
+    
+    <div class="button-actions">
+        <button class="edit-btn" (click)="$event.stopPropagation(); onEdit(generalNote())" title="Izmeni">
+            <mat-icon>edit</mat-icon>
+        </button>
+    
+        <button class="delete-btn" (click)="$event.stopPropagation(); onDelete(generalNote().id)" title="Obriši">
+            <mat-icon>delete_outline</mat-icon> 
+        </button>
+    </div>
+</div>

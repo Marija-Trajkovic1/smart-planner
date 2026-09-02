@@ -9,7 +9,8 @@ import { DailyNoteDialog } from '../daily-note-dialog/daily-note-dialog';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { CreateDailyNoteDto } from '../../core/dtos/create-daily-note.model';
 import { CdkDragDrop, DragDropModule, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
-import { DailyNoteForUpdate } from '../../core/dtos/daily-note-update.model';
+import { UpdateDailyNoteDialog } from '../update-daily-note-dialog/update-daily-note-dialog';
+import { GeneralNoteList } from "../general-note-list/general-note-list";
 
 @Component({
   selector: 'app-daily-notes-list',
@@ -18,8 +19,9 @@ import { DailyNoteForUpdate } from '../../core/dtos/daily-note-update.model';
     MatButtonModule,
     ReactiveFormsModule,
     MatDialogModule,
-    DragDropModule
-  ],
+    DragDropModule,
+    GeneralNoteList
+],
   templateUrl: './daily-notes-list.html',
   styleUrl: './daily-notes-list.scss',
 })
@@ -203,23 +205,31 @@ export class DailyNotesList implements OnInit {
   onUpdateDailyNote(note: DailyNotesListResponseDto): void {
     console.log('Otvaram izmenu za obavezu:', note);
 
-    const dialogRef = this.dialog.open(DailyNoteDialog, {
-      width: '500px',
+    const dialogRef = this.dialog.open(UpdateDailyNoteDialog, {
       data: { note: note }
     });
 
-    dialogRef.afterClosed().subscribe((result: DailyNoteForUpdate | undefined) => {
+    dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        console.log('Podaci spremni za slanje na bekend:', result);
-          
-        this.dailyNoteService.updateDailyNote(note.id, result).subscribe({
+        this.dailyNoteService.updateDailyNote(result.id, result).subscribe({
           next: () => {
-            console.log('Obaveza uspešno ažurirana na bekendu!');
-            this.loadData(); 
+            console.log('Obaveza uspešno ažurirana na bekendu');
+
+            const updateLocalFields = (notes: DailyNotesListResponseDto[]) =>
+              notes.map(n => n.id === result.id ? { ...n, ...result } : n);
+
+            this.q1.update(updateLocalFields);
+            this.q2.update(updateLocalFields);
+            this.q3.update(updateLocalFields);
+            this.q4.update(updateLocalFields);
           },
-          error: (err) => console.error('Greška prilikom ažuriranja obaveze:', err)
+          error: (err) => {
+            console.error('Greška pri ažuriranju obaveze:', err);
+            this.loadData();
+          }
         });
       }
     });
   }
+
 }

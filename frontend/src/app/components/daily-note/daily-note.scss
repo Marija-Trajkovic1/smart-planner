@@ -123,6 +123,22 @@
 
   &:hover {
     opacity: 1;
-    background-color: #fee2e2; // Blago crvena pozadina na hover
+    background-color: #fee2e2; 
+  }
+}
+
+.edit-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 0.8rem;
+  padding: 4px;
+  border-radius: 4px;
+  opacity: 0.4;
+  transition: opacity 0.2s, background-color 0.2s;
+
+  &:hover {
+    opacity: 1;
+    background-color: #e2e6fe; 
   }
 }

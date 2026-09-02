@@ -10,7 +10,7 @@ import { GeneralNotesResponseDto } from '../dtos/general-notes/general-notes-res
 import { plainToInstance } from 'class-transformer';
 import { Category } from '../category/category.entity';
 import { DailyNoteResponseDto } from '../dtos/daily-notes/daily-note-response.dto';
-import { GeneralNoteResponseDto } from '../dtos/general-notes/general-note-response.dto';
+import { UpdatePriorityItemDto } from '../dtos/general-notes/update-priority-general-notre.dto';
 
 @Injectable()
 export class GeneralNotesService {
@@ -27,7 +27,7 @@ export class GeneralNotesService {
     ){}
 
     async createGeneralNote(userId: number, newGeneralNote: CreateGeneralNoteDto)
-    :Promise<GeneralNoteResponseDto> 
+    :Promise<GeneralNotesResponseDto> 
     {
         const generalNoteToCreate = this.generalNoteRepository.create({
             ...newGeneralNote,
@@ -35,11 +35,11 @@ export class GeneralNotesService {
         });
         
         const createdGeneralNote = this.generalNoteRepository.save(generalNoteToCreate);
-        return plainToInstance(GeneralNoteResponseDto, createdGeneralNote);
+        return plainToInstance(GeneralNotesResponseDto, createdGeneralNote);
     }
 
     async updateGeneralNote(userId: number, generalNoteId: number, updateData: UpdateGeneralNoteDto)
-    :Promise<GeneralNoteResponseDto>{
+    :Promise<GeneralNotesResponseDto>{
         const existingGenNote = await this.generalNoteRepository.findOne({
             where:{
                 id: generalNoteId,
@@ -50,12 +50,12 @@ export class GeneralNotesService {
         if(!existingGenNote)
             throw new NotFoundException('Generalna obaveza za ažuriranje nije pronadjena.');
 
-        Object.assign(existingGenNote, updateData);
-        const updatedGeneralNote = this.generalNoteRepository.save(existingGenNote);
-        return plainToInstance(GeneralNoteResponseDto, updatedGeneralNote);
+        existingGenNote.title = updateData.title;
+        const updatedGeneralNote = await this.generalNoteRepository.save(existingGenNote);
+        return plainToInstance(GeneralNotesResponseDto, updatedGeneralNote);
     }
 
-    async deleteGeneralNote(userId, generalNoteId): Promise<{ message: string }> {
+    async deleteGeneralNote(userId: number, generalNoteId: number): Promise<{ message: string }> {
         const existingGenNote = await this.generalNoteRepository.findOne({
             where:{
                 id: generalNoteId,
@@ -122,6 +122,28 @@ export class GeneralNotesService {
 
             return dailyNote;
         });
+    }
+
+    async updatePriorities(userId: number, updatedItems: UpdatePriorityItemDto[]): Promise<void> {
+        const queryRunner = this.dataSource.createQueryRunner();
+        await queryRunner.connect();
+        await queryRunner.startTransaction();
+
+        try {
+            for (const item of updatedItems) {
+                await queryRunner.manager.update(
+                GeneralNote,
+                { id: item.id, user: { id: userId } },
+                { priority: item.priority }
+                );
+            }
+            await queryRunner.commitTransaction();
+        } catch (err) {
+            await queryRunner.rollbackTransaction();
+            throw err;
+        } finally {
+            await queryRunner.release();
+        }
     }
 
 }

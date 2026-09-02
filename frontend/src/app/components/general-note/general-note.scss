@@ -1,0 +1,79 @@
+
+$color-primary: #1976d2;
+$color-danger: #d32f2f;
+$color-text-main: #333333;
+$color-text-muted: #666666;
+$bg-hover: rgba(0, 0, 0, 0.04);
+$transition-speed: 0.2s;
+
+.note-container {
+  display: flex;
+  justify-content:flex-start;
+  align-items: center;
+  padding: 4px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  gap: 5px;
+
+  .note-content {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    flex: 1;
+
+    h2 {
+      margin: 0;
+      font-size: 16px;
+      font-weight: 500;
+      color: $color-text-main;
+    }
+
+    mat-label {
+      font-size: 16px;
+      color: $color-text-muted;
+    }
+  }
+
+  .button-actions {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+
+    button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: none;
+      border: none;
+      padding: 8px;
+      border-radius: 50%;
+      cursor: pointer;
+      transition: background-color $transition-speed ease, color $transition-speed ease;
+
+      mat-icon {
+        font-size: 20px;
+        width: 20px;
+        height: 20px;
+      }
+
+      &.edit-btn {
+        color: $color-text-muted;
+
+        &:hover {
+          background-color: $bg-hover;
+          color: $color-primary;
+        }
+      }
+
+      &.delete-btn {
+        color: $color-text-muted;
+
+        &:hover {
+          background-color: rgba($color-danger, 0.08);
+          color: $color-danger;
+        }
+      }
+    }
+  }
+}

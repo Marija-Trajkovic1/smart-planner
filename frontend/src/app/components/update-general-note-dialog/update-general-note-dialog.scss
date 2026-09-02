@@ -1,0 +1,49 @@
+$spacing-md: 16px;
+$spacing-lg: 24px;
+$color-text-muted: #666666;
+
+mat-dialog-content {
+  padding-top: $spacing-md !important; 
+  padding-bottom: $spacing-lg;
+
+  p {
+    margin-top: 0;
+    margin-bottom: $spacing-lg;
+    font-size: 0.95rem;
+    color: #333333;
+
+    strong {
+      color: $color-text-muted;
+      font-weight: 500;
+    }
+  }
+}
+
+.dialog-form {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+  width: 100%;
+
+  .full-width {
+    width: 100%;
+  }
+
+  mat-form-field {
+    margin-bottom: 4px;
+
+    mat-error {
+      font-size: 16px;
+    }
+  }
+}
+
+mat-dialog-actions {
+  padding: $spacing-md $spacing-lg !important;
+  gap: 12px; 
+
+  button {
+    min-width: 100px;
+    font-weight: 500;
+  }
+}

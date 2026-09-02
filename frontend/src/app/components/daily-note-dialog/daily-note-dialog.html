@@ -1,4 +1,5 @@
-<h2 mat-dialog-title>{{ isEditMode ? 'Izmenite podatke Vaše dnevne obaveze' : 'Unesite podatke kako biste kreirali dnevnu obavezu' }}</h2>
+<h2 mat-dialog-title>Unesite podatke kako biste kreirali dnevnu obavezu</h2>
+
 <mat-dialog-content [formGroup]="dailyNoteForm" class="daily-dialog-container">
 
     <mat-form-field appearance="outline">
@@ -12,19 +13,24 @@
     </mat-form-field>
 
     <mat-form-field appearance="outline">
-        <mat-label>Vreme obaveze</mat-label>
-        <input
-            matInput
-            type="time"
-            formControlName="time"
-        />
-       
+        <mat-label>Sat obaveze</mat-label>
+        <mat-select formControlName="selectedHour">
+            <mat-option [value]="null">--</mat-option>
+            @for(hour of hoursList; track hour) {
+                <mat-option [value]="hour">{{ hour }}</mat-option>
+            }
+        </mat-select>
     </mat-form-field>
 
-        <p>
-            Angular vreme: {{ dailyNoteForm.get('time')?.value }}
-        </p>
-
+    <mat-form-field appearance="outline">
+        <mat-label>Minut obaveze</mat-label>
+        <mat-select formControlName="selectedMinute">
+            <mat-option [value]="null">--</mat-option>
+            @for(min of minutesList; track min) {
+                <mat-option [value]="min">{{ min }}</mat-option>
+            }
+        </mat-select>
+    </mat-form-field>
 
     <mat-form-field appearance="outline">
         <mat-label>Lokacija obaveze</mat-label>
@@ -34,21 +40,19 @@
         />
     </mat-form-field>
 
-    @if (!isEditMode) {
-        <mat-form-field appearance="outline">
-            <mat-label>Prioritet Vaše obaveze</mat-label>
-            <input matInput
-                type="number"
-                formControlName = "priority"
-            />
-        </mat-form-field>
-    }
+    <mat-form-field appearance="outline">
+        <mat-label>Prioritet Vaše obaveze</mat-label>
+        <input matInput
+            type="number"
+            formControlName="priority"
+        />
+    </mat-form-field>
 
-    <mat-form-field>
+    <mat-form-field appearance="outline">
         <mat-label>Link do sajta sa informacijama</mat-label>
         <input matInput
             type="text"
-            formControlName = "link"
+            formControlName="link"
         />
     </mat-form-field>
 
@@ -70,23 +74,20 @@
         </mat-select>
     </mat-form-field>
 
-    @if (!isEditMode) {
-        <mat-form-field appearance="outline">
-            <mat-label>Izaberite kategoriju</mat-label>
-            <mat-select formControlName="categoryId">
-                @for(category of categories(); track category.id){
-                    <mat-option [value]="category.id">{{category.title}}</mat-option>
-                }
-            </mat-select>
-        </mat-form-field>
+    <mat-form-field appearance="outline">
+        <mat-label>Izaberite kategoriju</mat-label>
+        <mat-select formControlName="categoryId">
+            @for(category of categories(); track category.id){
+                <mat-option [value]="category.id">{{category.title}}</mat-option>
+            }
+        </mat-select>
+    </mat-form-field>
 
-    <div class = "checkbox-category">
-        <mat-checkbox formControlName = "isTheMostImportantToday">
+    <div class="checkbox-category">
+        <mat-checkbox formControlName="isTheMostImportantToday">
             Obeleži kao najvažniju obavezu za danas
         </mat-checkbox>
-    </div>
-}
-    
+    </div>   
 
 </mat-dialog-content>
 
@@ -98,6 +99,6 @@
         color="primary" 
         [disabled]="dailyNoteForm.invalid" 
         (click)="onSaveDailyNote()">
-        {{ isEditMode ? 'Sačuvaj izmene' : 'Kreiraj' }}
+        Kreiraj
     </button>
 </mat-dialog-actions>

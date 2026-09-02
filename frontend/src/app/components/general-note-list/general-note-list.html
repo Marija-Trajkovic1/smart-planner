@@ -1,1 +1,37 @@
-<p>general-note-list works!</p>
+<h2>Generalne obaveze</h2>
+
+@if(generalNotesList().length === 0){
+    <p>Niste kreirali nijednu veliku obavezu</p>
+
+    <button mat-raised-button color="primary" (click)="onAddNewGeneralNote()">
+        Kreiraj generalnu obavezu
+    </button>
+} @else {
+    <button mat-raised-button color="primary" (click)="onAddNewGeneralNote()">
+        Kreiraj generalnu obavezu
+    </button>
+
+    <!-- 1. Dodat kontejner za listu sa CDK direktivama -->
+    <div 
+      cdkDropList 
+      [cdkDropListData]="generalNotesList()" 
+      (cdkDropListDropped)="onDrop($event)"
+      class="notes-drop-list">
+
+      @for(generalNote of generalNotesList(); track generalNote.id){
+          <!-- 2. Dodat omotač sa cdkDrag direktivom za svaku stavku -->
+          <div cdkDrag class="note-drag-item">
+              
+              <app-general-note 
+                  [generalNote]="generalNote" 
+                  (editGeneralNote)="onUpdateGeneralNote($event)"
+                  (deleteNote)="onDeleteGeneralNote($event)">
+              </app-general-note>
+
+              <!-- 3. Opciono: Vizuelni prostor koji se vidi dok vučete karticu -->
+              <div class="note-drag-placeholder" *cdkDragPlaceholder></div>
+              
+          </div>
+      }
+    </div>
+}

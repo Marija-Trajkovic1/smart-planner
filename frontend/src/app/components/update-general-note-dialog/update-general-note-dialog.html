@@ -1,0 +1,26 @@
+<h2 mat-dialog-title>{{ data.note.title }}</h2>
+
+<mat-dialog-content>
+
+  <p><strong>Prioritet:</strong> {{ data.note.priority ?? 'Nije setovan' }}</p>
+
+  <form [formGroup]="updateGeneralNoteForm" class="dialog-form">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Naslov</mat-label>
+        <input matInput formControlName="title" placeholder="Unesite naslov" />
+        @if (updateGeneralNoteForm.get('title')?.hasError('required')) {
+          <mat-error>Naslov je obavezan</mat-error>
+        }
+      </mat-form-field>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()">Zatvori</button>
+  <button mat-raised-button color="primary" 
+          (click)="onSaveUpdate()" 
+          [disabled]="updateGeneralNoteForm.invalid">
+    Sačuvaj
+  </button>
+</mat-dialog-actions>
+

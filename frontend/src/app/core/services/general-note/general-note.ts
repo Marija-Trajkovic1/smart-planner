@@ -4,19 +4,37 @@ import { environment } from '../../environments/environments';
 import { GeneralNotesResponseDto } from '../../dtos/general-notes-response.dto';
 import { Observable } from 'rxjs';
 import { CreateGeneralNoteDto } from '../../dtos/create-general-note.dto';
+import { UpadteGeneralNoteDto } from '../../dtos/update-general-note.model';
 
 @Injectable({
   providedIn: 'root',
 })
-export class GeneralNote {
+export class GeneralNoteService {
   private http = inject(HttpClient);
 
   getGeneralNotesList(): Observable<GeneralNotesResponseDto[]>{
     return this.http.get<GeneralNotesResponseDto[]>(`${environment.getListOfGeneralNotesForUserApiUrl}`);
   }
 
-  createNewGeneralNote(newGeneralNote: CreateGeneralNoteDto, dayId: number): Observable<GeneralNotesResponseDto>{
-    return this.http.post<GeneralNotesResponseDto>(`${environment.createGeneralNoteApiUrl}/${dayId}`, newGeneralNote);
+  createNewGeneralNote(newGeneralNote: CreateGeneralNoteDto): Observable<GeneralNotesResponseDto>{
+    return this.http.post<GeneralNotesResponseDto>(`${environment.createGeneralNoteApiUrl}`, newGeneralNote);
+  }
+
+  updateDailyNote(generalNoteId: number, updateGeneralNoteDto: UpadteGeneralNoteDto): Observable<GeneralNotesResponseDto>{
+    return this.http.put<GeneralNotesResponseDto>(`${environment.updateGeneralNoteApiUrl}/${generalNoteId}`, updateGeneralNoteDto);
+  }
+
+  deleteGeneralNote(generalNoteId: number){
+    return this.http.delete<{message:string}>(`${environment.deleteGeneralNoteApiUrl}/${generalNoteId}`);
+  }
+
+  updatePriorities(updatedList: GeneralNotesResponseDto[]): Observable<void> {
+    const payload = updatedList.map(note => ({
+      id: note.id,
+      priority: note.priority
+    }));
+
+    return this.http.put<void>(`${environment.updatePrioritiesForGenrealNoteApiUrl}`, payload);
   }
 
 }

@@ -1,9 +1,9 @@
 .daily-dialog-container {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 16px;
-  padding: 16px 4px !important;
-  max-width: 550px;
+  grid-template-columns: repeat(2, 1fr); 
+  gap: 10px;
+  padding: 5px 4px !important;
+  max-width: 500px;
   overflow-x: hidden;
 
   mat-form-field:first-of-type {
@@ -12,23 +12,17 @@
 
   mat-form-field {
     width: 100%;
-
-    .mat-mdc-form-field-subscript-wrapper {
-      font-size: 11px;
-    }
   }
 
   .checkbox-category {
     grid-column: span 2;
-    padding: 8px 4px;
+    padding: 0px 2px;
     background-color: #f8f9fa;
-    border-radius: 6px;
-    border: 1px dashed #dee2e6;
-    margin-top: 4px;
+    border-radius: 15px;
     
     mat-checkbox {
       width: 100%;
-      font-weight: 500;
+      font-weight: 250;
       color: #495057;
     }
   }
@@ -36,17 +30,15 @@
 
 h2[mat-dialog-title] {
   font-size: 20px;
-  font-weight: 600;
+  font-weight: 500;
   color: #212529;
   letter-spacing: -0.5px;
-  padding-bottom: 8px;
-  border-bottom: 1px solid #e9ecef; 
+  padding-bottom: 5px;
   margin-bottom: 0;
 }
 
 mat-dialog-actions {
   padding: 16px 24px !important;
-  border-top: 1px solid #e9ecef;
   background-color: #ffffff;
   gap: 8px;
 

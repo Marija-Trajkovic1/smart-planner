@@ -1,3 +1,11 @@
+.daily-and-general-notes {
+  display: flex;
+  flex-wrap: wrap; 
+  gap: 20px;       
+  width: 100%;
+  box-sizing: border-box;
+}
+
 .matrix-container {
     padding: 20px;
 
@@ -96,3 +104,28 @@
 .quadrant-body.cdk-drop-list-receiving .drag-wrapper:not(.cdk-drag-placeholder) {
     transition: transform 200ms cubic-bezier(0, 0, 0.2, 1);
 }
+
+.general-notes-container {
+  flex: 1 1 calc(25% - 5px);  
+  min-width: 280px; 
+  padding-top: 20px; 
+}
+
+@media (max-width: 1024px) {
+  .daily-and-general-notes {
+    flex-direction: column;
+    gap: 5px;
+
+    .matrix-container,
+    .general-notes-container {
+      flex: 1 1 100%;
+      width: 100%;
+      padding-right: 0px;
+    }
+    
+    .general-notes-container {
+      padding-top: 0;
+    }
+  }
+}
+

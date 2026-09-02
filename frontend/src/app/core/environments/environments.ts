@@ -22,6 +22,7 @@ export const environment = {
   solveGeneralNoteApiUrl: 'http://localhost:3000/generalnotes/solveGeneralNote',
   deleteGeneralNoteApiUrl: 'http://localhost:3000/generalnotes/deleteGeneralNote',
   updateCategoryForGeneralNoteApiUrl: 'http://localhost:3000/generalnotes/updateCategoryForGeneralNote',
+  updatePrioritiesForGenrealNoteApiUrl: 'http://localhost:3000/generalnotes/updatePriorities',
 
   getAllCategoriesApiUrl: 'http://localhost:3000/category/getListOfCategories',
 
