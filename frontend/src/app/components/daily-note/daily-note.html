@@ -1,6 +1,7 @@
 <div class="note-card" 
-     [class.is-done]="dailyNote().isDone" 
-     [class.most-important]="dailyNote().isTheMostImportantToday">
+  [ngStyle]="dynamicStyles()"
+  [class.is-done]="dailyNote().isDone"
+  >
   
   <div class="note-left-section">
     <input type="checkbox" 
@@ -11,9 +12,6 @@
     <div class="note-info">
       <div class="title-row">
         <h4 class="note-title">{{ dailyNote().title }}</h4>
-        @if (dailyNote().isTheMostImportantToday) {
-          <span class="star-badge" title="Najvažnija obaveza danas">⭐</span>
-        }
       </div>
       
       <div class="meta-row">
@@ -32,10 +30,6 @@
       <a [href]="dailyNote().link" target="_blank" class="action-icon link-icon" title="Otvori link" (click)="$event.stopPropagation()">
         🔗
       </a>
-    }
-    
-    @if (dailyNote().reminder) {
-      <span class="action-icon reminder-icon" title="Podsetnik je uključen">🔔</span>
     }
 
     <button class="edit-btn" (click)="$event.stopPropagation(); onEdit(dailyNote())" title="Izmeni">

@@ -45,7 +45,6 @@ export class DailyNoteDialog {
     selectedMinute: [null], 
     location: [''],
     priority: [null],
-    isTheMostImportantToday: [false],
     link: [''],
     categoryId: [null, [Validators.required]],
     textType: ['PLAIN'],

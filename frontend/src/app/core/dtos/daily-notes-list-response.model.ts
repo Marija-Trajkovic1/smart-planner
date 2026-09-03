@@ -7,7 +7,6 @@ export interface DailyNotesListResponseDto {
     location:string;
     priority: number;
     isTheMostImportantToday: boolean;
-    reminder: boolean;
     link: string;
     isDone: boolean;
     textType: string;

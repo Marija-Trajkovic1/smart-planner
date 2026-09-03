@@ -17,13 +17,7 @@ export class DailyNote {
     location?: string;
 
     @Column({nullable: true})
-    priority?: number; 
-    
-    @Column({default: false})
-    isTheMostImportantToday: boolean;
-
-    @Column({nullable: true})
-    reminder?: boolean;
+    priority?: number;
 
     @Column({nullable: true})
     link?: string;

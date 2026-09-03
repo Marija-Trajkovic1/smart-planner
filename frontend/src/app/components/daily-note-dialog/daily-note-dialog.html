@@ -66,7 +66,7 @@
     </mat-form-field>
     
     <mat-form-field appearance="outline">
-        <mat-label>Stil fonta</mat-label>
+        <mat-label>Font teksta</mat-label>
         <mat-select formControlName="textType">
             @for(style of fontStyles; track style.value) {
                 <mat-option [value]="style.value">{{ style.viewValue }}</mat-option>
@@ -81,13 +81,7 @@
                 <mat-option [value]="category.id">{{category.title}}</mat-option>
             }
         </mat-select>
-    </mat-form-field>
-
-    <div class="checkbox-category">
-        <mat-checkbox formControlName="isTheMostImportantToday">
-            Obeleži kao najvažniju obavezu za danas
-        </mat-checkbox>
-    </div>   
+    </mat-form-field> 
 
 </mat-dialog-content>
 

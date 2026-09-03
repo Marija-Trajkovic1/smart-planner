@@ -98,11 +98,16 @@
 
         </div>
     }
-</div>
+    </div>
 
-<div class="general-notes-container">
-    <app-general-note-list></app-general-note-list>
+    <div class="general-notes-container">
+        <app-general-note-list
+            (generalNoteSolved)="handleGeneralNoteSolved($event)"
+        >
+        </app-general-note-list>
+    </div>
 
-</div>
-
+    <button mat-fab color="primary" class="reminder-fab" (click)="checkUpcomingReminders()">
+  <mat-icon>notifications</mat-icon>
+</button>
 </div>

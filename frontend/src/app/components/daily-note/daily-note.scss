@@ -20,11 +20,6 @@
     transform: translateY(-1px);
   }
 
-  &.most-important {
-    border-left-color: #f59e0b; 
-    background: #fffbeb; 
-  }
-
   &.is-done {
     border-left-color: #cbd5e1; 
     background: #f8fafc;
@@ -69,10 +64,6 @@
     font-size: 0.95rem;
     font-weight: 500;
     color: #1e293b;
-  }
-
-  .star-badge {
-    font-size: 0.85rem;
   }
 }
 

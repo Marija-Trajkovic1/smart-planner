@@ -1,4 +1,13 @@
-<div class="note-container">
+<div class="note-container"
+    [class.is-done]="generalNote().isDone" >
+    
+    <div class="note-left-section">
+         <input type="checkbox" 
+           [checked]="generalNote().isDone" 
+           (change)="onSolveNote($event)" 
+           class="note-checkbox">
+
+    </div>
     <div class="note-content">
         <h2>{{generalNote().title}}</h2>
         <mat-label>{{generalNote().priority}}</mat-label>   

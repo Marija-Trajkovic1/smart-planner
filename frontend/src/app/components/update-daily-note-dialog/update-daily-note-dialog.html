@@ -3,15 +3,6 @@
 <mat-dialog-content>
   <div class="fixed-details">
     <p><strong>Prioritet:</strong> {{ data.note.priority ?? 'Nije setovan' }}</p>
-    
-    <p>
-      <strong>Da li je najvažnija obaveza danas:</strong> 
-      @if (data.note.isTheMostImportantToday) {
-        <span class="star-badge" title="Najvažnija obaveza danas">⭐ Da</span>
-      } @else {
-        <span>Ne</span>
-      }
-    </p>
   </div>
 
   <hr class="separator" />
@@ -61,14 +52,19 @@
       <mat-form-field appearance="outline">
         <mat-label>Font teksta</mat-label>
         <mat-select formControlName="textType">
-          <mat-option value="PLAIN">Plain</mat-option>
-          <mat-option value="RICH">Rich Text</mat-option>
+          @for(style of fontStyles; track style.value) {
+                <mat-option [value]="style.value">{{ style.viewValue }}</mat-option>
+            }
         </mat-select>
       </mat-form-field>
 
       <mat-form-field appearance="outline">
         <mat-label>Veličina teksta (px)</mat-label>
-        <input matInput type="number" formControlName="textHeight" />
+        <mat-select formControlName="textHeight">
+            @for(size of fontSizes; track size.value) {
+                <mat-option [value]="size.value">{{ size.viewValue }}</mat-option>
+            }
+        </mat-select>
       </mat-form-field>
     </div>
 

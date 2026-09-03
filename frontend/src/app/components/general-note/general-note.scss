@@ -1,44 +1,86 @@
-
-$color-primary: #1976d2;
+$color-primary: #1976d2;      // Plava boja za ivicu i aktivan checkbox
 $color-danger: #d32f2f;
-$color-text-main: #333333;
-$color-text-muted: #666666;
+$color-text-main: #1e293b;   // Modernija, tamno siva za tekst
+$color-text-muted: #64748b;  // Prefinjenija siva za labele
 $bg-hover: rgba(0, 0, 0, 0.04);
-$transition-speed: 0.2s;
+$transition-speed: 0.25s;
 
 .note-container {
   display: flex;
-  justify-content:flex-start;
+  justify-content: space-between;
   align-items: center;
-  padding: 4px;
+  padding: 14px 18px;
   background-color: #ffffff;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  gap: 5px;
+  border-radius: 10px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05), 0 4px 12px rgba(0, 0, 0, 0.03);
+  gap: 16px;
+  border-left: 4px solid $color-primary; // Ivica je uvek plava po defaultu
+  transition: all $transition-speed ease;
 
+  // Stilovi kada je obaveza označena kao ZAVRŠENA
+  &.is-done {
+    background-color: #f8fafc; // Blago osenčena pozadina za završenu karticu
+    
+    // Tekst i labela se farbaju u sivo
+    .note-content {
+      h2 {
+        color: #94a3b8; // Svetlo siva boja teksta
+      }
+      mat-label {
+        color: #cbd5e1; // Još svetlija siva za prioritet
+      }
+    }
+
+    // Akcije blago blede
+    .button-actions {
+      opacity: 0.4;
+    }
+  }
+
+  // Leva sekcija za checkbox
+  .note-left-section {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .note-checkbox {
+      width: 20px;
+      height: 20px;
+      cursor: pointer;
+      accent-color: $color-primary; // Kvadratić i kvačica se farbaju u plavo kad se selektuju
+    }
+  }
+
+  // Srednji deo sa tekstom
   .note-content {
     display: flex;
     flex-direction: column;
-    gap: 2px;
+    gap: 4px;
     flex: 1;
 
     h2 {
       margin: 0;
-      font-size: 16px;
+      font-size: 1rem;
       font-weight: 500;
       color: $color-text-main;
+      transition: color $transition-speed ease;
     }
 
     mat-label {
-      font-size: 16px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
       color: $color-text-muted;
     }
   }
 
+  // Desna sekcija sa akcijama
   .button-actions {
     display: flex;
     align-items: center;
-    gap: 4px;
+    gap: 6px;
+    transition: opacity $transition-speed ease;
 
     button {
       display: flex;
@@ -59,7 +101,6 @@ $transition-speed: 0.2s;
 
       &.edit-btn {
         color: $color-text-muted;
-
         &:hover {
           background-color: $bg-hover;
           color: $color-primary;
@@ -68,7 +109,6 @@ $transition-speed: 0.2s;
 
       &.delete-btn {
         color: $color-text-muted;
-
         &:hover {
           background-color: rgba($color-danger, 0.08);
           color: $color-danger;

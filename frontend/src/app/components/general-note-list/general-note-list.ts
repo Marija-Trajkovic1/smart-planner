@@ -1,18 +1,23 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, output, signal } from '@angular/core';
 import { GeneralNotesResponseDto } from '../../core/dtos/general-notes-response.dto';
 import { GeneralNoteService } from '../../core/services/general-note/general-note';
 import { GeneralNote } from '../general-note/general-note';
 import { CreateGeneralNoteDialog } from '../create-general-note-dialog/create-general-note-dialog';
 import { CreateGeneralNoteDto } from '../../core/dtos/create-general-note.dto';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { UpdateGeneralNoteDialog } from '../update-general-note-dialog/update-general-note-dialog';
 import { CdkDragDrop, DragDropModule, moveItemInArray } from '@angular/cdk/drag-drop';
+import { ReactiveFormsModule } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'app-general-note-list',
   imports: [
     GeneralNote,
     DragDropModule,
+    ReactiveFormsModule, 
+    MatButtonModule,
+    MatDialogModule,
   ],
   templateUrl: './general-note-list.html',
   styleUrl: './general-note-list.scss',
@@ -20,7 +25,9 @@ import { CdkDragDrop, DragDropModule, moveItemInArray } from '@angular/cdk/drag-
 export class GeneralNoteList {
   private generalNoteService = inject(GeneralNoteService);
   private dialog = inject(MatDialog);
+  
   generalNotesList = signal<GeneralNotesResponseDto[]>([]);
+  generalNoteSolved = output<{ id: number; isDone: boolean }>();
 
   ngOnInit(): void {
     this.loadGeneralNotes();
@@ -116,5 +123,9 @@ export class GeneralNoteList {
     })
   }
 
+  onSolveNote(event: { id: number; isDone: boolean }): void {
+    console.log('Generalna obaveza prosleđena iz liste ka glavnoj strani:', event);
+    this.generalNoteSolved.emit(event);
+  }
 
 }

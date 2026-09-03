@@ -14,10 +14,6 @@ export class UpdateDailyNoteDto{
     location?:string;
 
     @IsOptional()
-    @IsBoolean()
-    reminder?: boolean;
-
-    @IsOptional()
     @IsString()
     link?: string;
 

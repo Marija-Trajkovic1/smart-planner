@@ -1,4 +1,4 @@
-import { Component, inject, signal, OnInit } from '@angular/core';
+import { Component, inject, signal, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { DailyNotesListResponseDto } from '../../core/dtos/daily-notes-list-response.model';
 import { DailyNoteService } from '../../core/services/daily-note/daily-note-service';
@@ -11,6 +11,11 @@ import { CreateDailyNoteDto } from '../../core/dtos/create-daily-note.model';
 import { CdkDragDrop, DragDropModule, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 import { UpdateDailyNoteDialog } from '../update-daily-note-dialog/update-daily-note-dialog';
 import { GeneralNoteList } from "../general-note-list/general-note-list";
+import { GeneralNoteService } from '../../core/services/general-note/general-note';
+import { sortFn } from '../../core/utils/prioritires.utils';
+import { DailyNoteResponseDto } from '../../core/dtos/daily-note-response.model';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-daily-notes-list',
@@ -20,7 +25,9 @@ import { GeneralNoteList } from "../general-note-list/general-note-list";
     ReactiveFormsModule,
     MatDialogModule,
     DragDropModule,
-    GeneralNoteList
+    GeneralNoteList,
+    MatSnackBarModule,
+    MatIconModule
 ],
   templateUrl: './daily-notes-list.html',
   styleUrl: './daily-notes-list.scss',
@@ -28,7 +35,12 @@ import { GeneralNoteList } from "../general-note-list/general-note-list";
 export class DailyNotesList implements OnInit {
   private route = inject(ActivatedRoute);
   private dialog = inject(MatDialog);
+  private snackBar = inject(MatSnackBar); 
+  
   private dailyNoteService = inject(DailyNoteService);
+  private generalNoteService = inject(GeneralNoteService);
+
+  @ViewChild(GeneralNoteList) generalNoteListChild!: GeneralNoteList; 
 
   q1 = signal<DailyNotesListResponseDto[]>([]);
   q2 = signal<DailyNotesListResponseDto[]>([]);
@@ -54,8 +66,6 @@ export class DailyNotesList implements OnInit {
       next: (response: DailyNotesListResponseDto[]) => {
         console.log('Podaci sa bekenda stigli:', response);
         
-        const sortFn = (a: any, b: any) => (a.priority ?? 0) - (b.priority ?? 0);
-        
         this.q1.set(response.filter(n => n.category?.id === 2).sort(sortFn));
         this.q2.set(response.filter(n => n.category?.id === 3).sort(sortFn));
         this.q3.set(response.filter(n => n.category?.id === 4).sort(sortFn));
@@ -63,6 +73,48 @@ export class DailyNotesList implements OnInit {
       },
       error: (err) => console.error('Greška pri učitavanju obaveza:', err)
     });
+  }
+
+  handleGeneralNoteSolved(event: { id: number; isDone: boolean }): void {
+    if (!event.isDone) return;
+    const dialogRef = this.dialog.open(DailyNoteDialog);
+
+    dialogRef.afterClosed().subscribe(((result?: CreateDailyNoteDto) => {
+      if (result) {
+        this.generalNoteService.solveGeneralNote(result, this.dayId, event.id).subscribe({
+           next: (newDailyNote: DailyNotesListResponseDto) => {
+            const targetCategoryId = newDailyNote.category.id;
+            let currentQuadrantNotes: DailyNotesListResponseDto[] = [];
+
+            if (targetCategoryId === 2) currentQuadrantNotes = [...this.q1()];
+            else if (targetCategoryId === 3) currentQuadrantNotes = [...this.q2()];
+            else if (targetCategoryId === 4) currentQuadrantNotes = [...this.q3()];
+            else if (targetCategoryId === 5) currentQuadrantNotes = [...this.q4()];
+
+            const combinedList = [...currentQuadrantNotes, newDailyNote].sort(sortFn);
+
+            const updatedNotes = combinedList.map((note, index) => ({
+              ...note,
+              priority: index + 1
+            }));
+
+            this.updateLocalQuadrantSignal(targetCategoryId, updatedNotes);
+            this.updatePrioritiesOnBackend(updatedNotes);
+
+            if (this.generalNoteListChild) {
+              this.generalNoteListChild.loadGeneralNotes();
+            }
+          },
+          error: (err) => {
+            console.error('Greška pri rešavanju:', err);
+            if (this.generalNoteListChild) this.generalNoteListChild.loadGeneralNotes();
+          }
+        });
+
+      } else {
+        
+      }
+    }));
   }
 
   onDrop(event: CdkDragDrop<DailyNotesListResponseDto[]>, targetCategoryId: number): void {
@@ -231,5 +283,41 @@ export class DailyNotesList implements OnInit {
       }
     });
   }
+
+  checkUpcomingReminders(): void {
+  const allNotes = [...this.q1(), ...this.q2(), ...this.q3(), ...this.q4()];
+
+  const sada = new Date();
+  const trenutnoVreme = sada.toTimeString().substring(0, 5);
+
+  const predstojeceObaveze = allNotes.filter(note => 
+    !note.isDone && 
+    note.time && 
+    note.time > trenutnoVreme
+  );
+
+  if (predstojeceObaveze.length === 0) {
+    this.snackBar.open('Nemate preostalih obaveza za danas.', 'Zatvori', {
+      duration: 3000,
+      horizontalPosition: 'right',
+      verticalPosition: 'bottom'
+    });
+    return;
+  }
+
+  predstojeceObaveze.sort((a, b) => (a.time ?? '').localeCompare(b.time ?? ''));
+
+  let poruka = 'Predstojeće obaveze za danas:\n';
+  predstojeceObaveze.forEach(note => {
+    poruka += `• ${note.title} u ${note.time}h\n`;
+  });
+
+  this.snackBar.open(poruka, 'U redu', {
+    duration: 6000, 
+    horizontalPosition: 'right',
+    verticalPosition: 'bottom'
+  });
+}
+
 
 }

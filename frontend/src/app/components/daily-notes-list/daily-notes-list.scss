@@ -129,3 +129,15 @@
   }
 }
 
+.reminder-fab {
+  position: fixed !important; // Odvaja dugme i fiksira ga za prozor
+  bottom: 24px;              // 24px od dna ekrana
+  right: 24px;               // 24px od desne ivice ekrana
+  z-index: 9999;             // Uvek ispred matrice i svega ostalog
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s ease;
+
+  &:hover {
+    transform: scale(1.05); // Blagi efekat povećanja na hover
+  }
+}

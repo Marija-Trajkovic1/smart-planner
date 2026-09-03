@@ -6,6 +6,7 @@ import { MAT_DIALOG_DATA, MatDialogActions, MatDialogModule, MatDialogRef } from
 import { MatError, MatFormFieldModule, MatLabel } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatOption, MatSelectModule } from '@angular/material/select';
+import { FONT_SIZES, FONT_STYLES } from '../../core/constants/font-options.constants';
 
 @Component({
   selector: 'app-update-daily-note-dialog',
@@ -33,6 +34,9 @@ export class UpdateDailyNoteDialog {
 
   hoursList = Array.from({ length: 24 }, (_, i) => i < 10 ? `0${i}` : `${i}`);
   minutesList = Array.from({ length: 12 }, (_, i) => i * 5 < 10 ? `0${i * 5}` : `${i * 5}`);
+
+  fontStyles = FONT_STYLES;
+  fontSizes = FONT_SIZES;
 
   updateDailyNoteForm: FormGroup = this.formBuilder.group({
     title: ['', [Validators.required]],

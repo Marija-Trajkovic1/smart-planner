@@ -5,6 +5,8 @@ import { GeneralNotesResponseDto } from '../../dtos/general-notes-response.dto';
 import { Observable } from 'rxjs';
 import { CreateGeneralNoteDto } from '../../dtos/create-general-note.dto';
 import { UpadteGeneralNoteDto } from '../../dtos/update-general-note.model';
+import { CreateDailyNoteDto } from '../../dtos/create-daily-note.model';
+import { DailyNotesListResponseDto } from '../../dtos/daily-notes-list-response.model';
 
 @Injectable({
   providedIn: 'root',
@@ -35,6 +37,10 @@ export class GeneralNoteService {
     }));
 
     return this.http.put<void>(`${environment.updatePrioritiesForGenrealNoteApiUrl}`, payload);
+  }
+
+  solveGeneralNote(createDailyNoteDto: CreateDailyNoteDto,dayId: number, generalNoteId: number): Observable<DailyNotesListResponseDto> {
+    return this.http.post<DailyNotesListResponseDto>(`${environment.solveGeneralNoteApiUrl}/${generalNoteId}/${dayId}`, createDailyNoteDto);
   }
 
 }
